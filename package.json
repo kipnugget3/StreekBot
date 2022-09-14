@@ -1,0 +1,55 @@
+{
+    "name": "streekbot",
+    "version": "1.0.0-dev",
+    "private": true,
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "lint": "eslint src --ext .ts --cache",
+        "lint:fix": "eslint src --ext .ts --cache --fix",
+        "dev": "nodemon",
+        "prebuild": "rimraf ./dist",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "test": "npm run lint",
+        "prettier": "prettier --write src",
+        "contabo-build": "npm ci && tsc && npm prune --omit=dev",
+        "contabo": "npm start"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/HetStreek/StreekBot.git"
+    },
+    "keywords": [
+        "quabot"
+    ],
+    "contributors": [
+        "Joasss",
+        "thehackerboi69github"
+    ],
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/HetStreek/StreekBot/issues"
+    },
+    "homepage": "https://github.com/HetStreek/StreekBot#readme",
+    "dependencies": {
+        "discord.js": "^14.3.0",
+        "mongodb": "^4.9.1"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.36.1",
+        "@typescript-eslint/parser": "^5.36.1",
+        "dotenv": "^16.0.2",
+        "eslint": "^8.23.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "nodemon": "^2.0.19",
+        "prettier": "^2.7.1",
+        "rimraf": "^3.0.2",
+        "typescript": "^4.8.2"
+    },
+    "engines": {
+        "node": "18.x"
+    }
+}
