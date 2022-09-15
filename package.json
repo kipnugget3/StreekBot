@@ -12,7 +12,7 @@
         "build": "tsc",
         "start": "node dist/index.js",
         "test": "npm run lint",
-        "prettier": "prettier --write src",
+        "prettier": "prettier --write .",
         "prepare": "husky install",
         "contabo-build": "npm ci && tsc && npm prune --omit=dev",
         "contabo": "npm start"
