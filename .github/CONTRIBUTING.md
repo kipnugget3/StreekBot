@@ -39,6 +39,6 @@ While coding, you can always test it by doing the following:
 
 ## Commit and push
 
-> Make sure to follow the [commit message convention](https://github.com/HarryPotterGirlzz/Hermione-Granger/blob/main/.github/COMMIT_CONVENTION.md).
+> Make sure to follow the [commit message convention](./COMMIT_CONVENTION.md).
 
 When you are done coding, run `npm test` and make sure there are no linting errors. If there are, please resolve them and try again. You can run `npm run lint:fix` to automatically fix some linting errors. When everything works fine and there are no linting errors, you can commit and push your code and open a pull request!
