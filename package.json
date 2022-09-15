@@ -13,6 +13,7 @@
         "start": "node dist/index.js",
         "test": "npm run lint",
         "prettier": "prettier --write src",
+        "prepare": "husky install",
         "contabo-build": "npm ci && tsc && npm prune --omit=dev",
         "contabo": "npm start"
     },
@@ -24,8 +25,8 @@
         "quabot"
     ],
     "contributors": [
-        "Joasss",
-        "thehackerboi69github"
+        "thehackerboi69github",
+        "Joasss"
     ],
     "license": "ISC",
     "bugs": {
@@ -37,6 +38,8 @@
         "mongodb": "^4.9.1"
     },
     "devDependencies": {
+        "@commitlint/cli": "^17.1.2",
+        "@commitlint/config-angular": "^17.1.0",
         "@typescript-eslint/eslint-plugin": "^5.36.1",
         "@typescript-eslint/parser": "^5.36.1",
         "dotenv": "^16.0.2",
@@ -44,6 +47,8 @@
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-prettier": "^4.2.1",
+        "husky": "^8.0.1",
+        "lint-staged": "^13.0.3",
         "nodemon": "^2.0.19",
         "prettier": "^2.7.1",
         "rimraf": "^3.0.2",
