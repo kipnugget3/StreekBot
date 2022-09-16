@@ -4,12 +4,15 @@ import {
     GuildTextBasedChannel,
     inlineCode,
     MessageActionRowComponentBuilder,
-    Role,
     roleMention,
     TextInputStyle,
     userMention,
 } from 'discord.js';
-import { throwCachedNotFounderror } from '../Errors';
+import {
+    throwVerifiedRoleNotFoundError,
+    throwVerifyErrorsChannelNotFoundError,
+    throwVerifyLogsChannelNotFoundError,
+} from '../Errors';
 import { Modal, TextInput } from '../Structures';
 
 export default new Modal()
@@ -18,7 +21,7 @@ export default new Modal()
     .addModalComponents(
         new TextInput()
             .setCustomId('naam')
-            .setLabel('Je voornaam + achternaam')
+            .setLabel('Je voornaam en achternaam')
             .setStyle(TextInputStyle.Paragraph)
             .setMinLength(1)
             .setMaxLength(300)
@@ -41,9 +44,17 @@ export default new Modal()
         const { staffRoleId, verifiedRoleId, verifyErrorsChannelId, verifyLogsChannelId } =
             await client.getServerConfigSchema();
 
-        const verifyRole = (await guild.roles.fetch(verifiedRoleId)) as Role;
+        const verifiedRole = guild.roles.cache.ensure(verifiedRoleId, throwVerifiedRoleNotFoundError);
 
-        const verifyErrorsChannel = (await guild.channels.fetch(verifyErrorsChannelId)) as GuildTextBasedChannel;
+        const verifyErrorsChannel = guild.channels.cache.ensure(
+            verifyErrorsChannelId,
+            throwVerifyErrorsChannelNotFoundError
+        ) as GuildTextBasedChannel;
+
+        const verifyLogsChannel = guild.channels.cache.ensure(
+            verifyLogsChannelId,
+            throwVerifyLogsChannelNotFoundError
+        ) as GuildTextBasedChannel;
 
         if (!/^\d{5}$/.test(leerlingnummer)) {
             const embed = new EmbedBuilder()
@@ -125,16 +136,9 @@ export default new Modal()
             leerlingnummer,
         });
 
-        await member.roles.add(verifyRole);
+        await member.roles.add(verifiedRole);
 
         await interaction.editReply('You are now verified.');
-
-        const throwVerifyLogsChannelNotFoundError = () => throwCachedNotFounderror('Verify logs channel not found.');
-
-        const verifyLogsChannel = guild.channels.cache.ensure(
-            verifyLogsChannelId,
-            throwVerifyLogsChannelNotFoundError
-        ) as GuildTextBasedChannel;
 
         const embed = new EmbedBuilder()
             .setDescription(`${user} is geverifieërd!`)

@@ -1,4 +1,5 @@
 import { EmbedBuilder, Events, GuildTextBasedChannel } from 'discord.js';
+import { throwWelcomeChannelNotFoundError } from '../Errors';
 import { ClientEvent } from '../Structures';
 
 export default new ClientEvent({
@@ -12,11 +13,12 @@ export default new ClientEvent({
 
         await client.verificationCollection.deleteOne({ userId: user.id }).catch(() => null);
 
-        const channel = (await client.channels
-            .fetch(welcomeChannelId)
-            .catch(() => null)) as GuildTextBasedChannel | null;
+        const welcomeChannel = guild.channels.cache.ensure(
+            welcomeChannelId,
+            throwWelcomeChannelNotFoundError
+        ) as GuildTextBasedChannel;
 
-        if (!channel) return;
+        if (!welcomeChannel) return;
 
         let leaveMessage = leaveMessages[Math.floor(Math.random() * leaveMessages.length)];
 
@@ -35,6 +37,6 @@ export default new ClientEvent({
             .setColor(client.config.color)
             .setTimestamp();
 
-        await channel.send({ embeds: [channelEmbed] });
+        await welcomeChannel.send({ embeds: [channelEmbed] });
     },
 });

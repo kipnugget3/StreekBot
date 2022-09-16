@@ -49,7 +49,7 @@ export class Logger {
     private _log(type: LogType, content: string | Error) {
         const log: Log = {
             type,
-            content: content instanceof Error ? content.stack ?? content.message : content.toString(),
+            content: content instanceof Error ? content.stack ?? content.toString() : content,
             timestamp: Date.now(),
         };
 

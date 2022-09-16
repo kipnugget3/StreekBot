@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ComponentType, Interaction, isJSONEncodable } from 'discord.js';
+import { ApplicationCommandType, Awaitable, ComponentType, Interaction, isJSONEncodable } from 'discord.js';
 import type { Button } from './Button';
 import type { ContextMenu, MessageContextMenu, UserContextMenu } from './ContextMenu';
 import type { SelectMenu } from './SelectMenu';
@@ -11,7 +11,7 @@ import type {
     AnyStructure,
     Callback,
 } from './Types';
-import { kStructureType } from '../Util';
+import { kCallback, kStructureType } from '../Util';
 
 export enum StructureType {
     Command = 'Command',
@@ -26,10 +26,11 @@ function BaseStructure(type: StructureType) {
     return (target: any) =>
         class extends target {
             [kStructureType] = type;
+            [kCallback]!: Callback<any>;
 
-            async run(interaction: Interaction<'cached'>, ...args: any[]) {
+            async run(interaction: Interaction<'cached'>) {
                 try {
-                    await this._cb(interaction, ...args);
+                    await (this[kCallback](interaction) as Awaitable<any>);
                 } catch (err) {
                     if (!(err instanceof Error)) return;
 
@@ -53,7 +54,7 @@ function BaseStructure(type: StructureType) {
             }
 
             setCallback(cb: Callback<any>) {
-                this._cb = cb;
+                this[kCallback] = cb;
 
                 return this;
             }

@@ -2,6 +2,8 @@ export * from './Mongo';
 
 export const kStructureType = Symbol('structureType');
 
+export const kCallback = Symbol('callback');
+
 export function cloneObject<T extends object>(obj: T): T {
     return Object.assign(Object.create(obj), obj);
 }

@@ -9,6 +9,8 @@ export default new SlashCommand()
     .setCallback(async interaction => {
         await interaction.deferReply();
 
+        // This can be destructured normally on next semver:minor release of discord.js,
+        // as all events will have a ready client.
         const client = interaction.client as Client<true>;
 
         const totalMemoryMB = Math.round(os.totalmem() / 1024 / 1024);

@@ -1,4 +1,5 @@
 import { Awaitable, Client, ClientEvents } from 'discord.js';
+import { kCallback } from '../Util';
 
 interface ClientEventData<K extends keyof ClientEvents> {
     name: K;
@@ -6,17 +7,17 @@ interface ClientEventData<K extends keyof ClientEvents> {
 }
 
 export class ClientEvent<K extends keyof ClientEvents = keyof ClientEvents> {
-    private _callback;
+    private [kCallback]: (...args: ClientEvents[K]) => void;
     name;
 
     constructor(data: ClientEventData<K>) {
         this.name = data.name;
-        this._callback = data.run;
+        this[kCallback] = data.run;
     }
 
     async run(...args: ClientEvents[K]) {
         try {
-            await (this._callback(...args) as Awaitable<void>);
+            await (this[kCallback](...args) as Awaitable<void>);
         } catch (err) {
             if (!(err instanceof Error)) return;
 

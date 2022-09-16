@@ -1,4 +1,5 @@
 import { EmbedBuilder, Events, GuildTextBasedChannel } from 'discord.js';
+import { throwWelcomeChannelNotFoundError } from '../Errors';
 import { ClientEvent } from '../Structures';
 
 export default new ClientEvent({
@@ -10,11 +11,12 @@ export default new ClientEvent({
 
         const { welcomeChannelId, welcomeMessages } = schema;
 
-        const channel = (await client.channels
-            .fetch(welcomeChannelId)
-            .catch(() => null)) as GuildTextBasedChannel | null;
+        const welcomeChannel = guild.channels.cache.ensure(
+            welcomeChannelId,
+            throwWelcomeChannelNotFoundError
+        ) as GuildTextBasedChannel;
 
-        if (!channel) return;
+        if (!welcomeChannel) return;
 
         let welcomeMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
@@ -39,7 +41,7 @@ export default new ClientEvent({
 
         const dmEmbed = new EmbedBuilder().setTitle(title).setDescription(description).setTimestamp();
 
-        await channel.send({ embeds: [channelEmbed] });
+        await welcomeChannel.send({ embeds: [channelEmbed] });
 
         await member.send({ embeds: [dmEmbed] }).catch(() => null);
     },

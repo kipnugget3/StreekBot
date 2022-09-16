@@ -8,8 +8,18 @@ export function throwError(errorOrMessage?: Error | string, options?: ErrorOptio
     throw new Error(errorOrMessage, options);
 }
 
-export class CachedNotFoundError extends Error {}
+export const throwStaffRoleNotFoundError = () => throwError('Staff role not found.');
 
-export function throwCachedNotFounderror(message = 'Item not found in cache.'): never {
-    throw new CachedNotFoundError(message);
-}
+export const throwVerifiedRoleNotFoundError = () => throwError('Verified role not found.');
+
+export const throwVerificationSupportRoleNotFoundError = () => throwError('Verification support role not found.');
+
+export const throwLogChannelNotFoundError = () => throwError('Log channel not found.');
+
+export const throwVerifyErrorsChannelNotFoundError = () => throwError('Verify errors channel not found.');
+
+export const throwVerifyLogsChannelNotFoundError = () => throwError('Verify logs channel not found.');
+
+export const throwVerifySupportChannelNotFoundError = () => throwError('Verify support channel not found.');
+
+export const throwWelcomeChannelNotFoundError = () => throwError('Welcome channel not found.');

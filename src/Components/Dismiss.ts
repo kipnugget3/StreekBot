@@ -21,10 +21,7 @@ export default new Button()
 
         const verifyUser = await client.verificationCollection.findOne({ leerlingnummer });
 
-        if (!verifyUser)
-            return interaction.editReply({
-                content: 'That user was already removed or could not be found.',
-            });
+        if (!verifyUser) return interaction.editReply('That user was already removed or could not be found.');
 
         const { verifiedRoleId } = await client.getServerConfigSchema();
 
@@ -34,7 +31,7 @@ export default new Button()
 
         await client.verificationCollection.deleteOne({ leerlingnummer });
 
-        await interaction.editReply({ content: 'Succesfully unverified that user.' });
+        await interaction.editReply('Succesfully unverified that user.');
 
         const embed = new EmbedBuilder()
             .setDescription(`~~${user} is geverifieërd!~~\nVerificatie verwijderd door ${interaction.user}`)
