@@ -36,8 +36,8 @@ export default new Modal()
     .setCallback(async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
-        const naam = interaction.fields.getTextInputValue('naam');
-        const leerlingnummer = interaction.fields.getTextInputValue('leerlingnummer');
+        const name = interaction.fields.getTextInputValue('naam');
+        const studentNumber = interaction.fields.getTextInputValue('leerlingnummer');
 
         const { client, guild, member, user } = interaction;
 
@@ -56,7 +56,7 @@ export default new Modal()
             throwVerifyLogsChannelNotFoundError
         ) as GuildTextBasedChannel;
 
-        if (!/^\d{5}$/.test(leerlingnummer)) {
+        if (!/^\d{5}$/.test(studentNumber)) {
             const embed = new EmbedBuilder()
                 .setDescription(`Gebruik een geldig leerlingnummer.`)
                 .setColor(client.config.color);
@@ -78,9 +78,9 @@ export default new Modal()
             return interaction.editReply({ embeds: [embed] });
         }
 
-        const verifyUserWithStudentnumber = verifyUsers.find(user => user.leerlingnummer === leerlingnummer);
+        const verifyUserWithStudentNumber = verifyUsers.find(user => user.leerlingnummer === studentNumber);
 
-        if (parseInt(leerlingnummer) > 24000 || parseInt(leerlingnummer) < 15000) {
+        if (parseInt(studentNumber) > 24000 || parseInt(studentNumber) < 15000) {
             const embed = new EmbedBuilder()
                 .setDescription(`Gebruik een geldig leerlingnummer.`)
                 .setColor(client.config.color);
@@ -88,12 +88,12 @@ export default new Modal()
             return interaction.editReply({ embeds: [embed] });
         }
 
-        if (verifyUserWithStudentnumber) {
+        if (verifyUserWithStudentNumber) {
             const embed = new EmbedBuilder()
                 .setDescription(
-                    `${user} probeerde met leerlingnummer \`${leerlingnummer}\` te verifiëren. ` +
-                        `Dit leerlingnummer is al gebruikt door ${userMention(verifyUserWithStudentnumber.userId)}, ` +
-                        `naam: ${inlineCode(verifyUserWithStudentnumber.naam)}!`
+                    `${user} probeerde met leerlingnummer \`${studentNumber}\` te verifiëren. ` +
+                        `Dit leerlingnummer is al gebruikt door ${userMention(verifyUserWithStudentNumber.userId)}, ` +
+                        `naam: ${inlineCode(verifyUserWithStudentNumber.naam)}!`
                 )
                 .setColor(client.config.color);
 
@@ -108,12 +108,12 @@ export default new Modal()
             return interaction.editReply({ embeds: [interactionEmbed] });
         }
 
-        const verifyUserWithName = verifyUsers.find(user => user.naam.toLowerCase() === naam.toLowerCase());
+        const verifyUserWithName = verifyUsers.find(user => user.naam.toLowerCase() === name.toLowerCase());
 
         if (verifyUserWithName) {
             const embed = new EmbedBuilder()
                 .setDescription(
-                    `${user} probeerde met naam \`${naam}\` te verifiëren. ` +
+                    `${user} probeerde met naam \`${name}\` te verifiëren. ` +
                         `Deze naam is al gebruikt door ${userMention(verifyUserWithName.userId)}, ` +
                         `leerlingnummer: ${inlineCode(verifyUserWithName.leerlingnummer)}!`
                 )
@@ -132,8 +132,8 @@ export default new Modal()
 
         await client.verificationCollection.insertOne({
             userId: user.id,
-            naam,
-            leerlingnummer,
+            naam: name,
+            leerlingnummer: studentNumber,
         });
 
         await member.roles.add(verifiedRole);
@@ -142,7 +142,7 @@ export default new Modal()
 
         const embed = new EmbedBuilder()
             .setDescription(`${user} is geverifieërd!`)
-            .addFields({ name: 'Leerlingnummer', value: leerlingnummer }, { name: 'Naam', value: naam })
+            .addFields({ name: 'Leerlingnummer', value: studentNumber }, { name: 'Naam', value: name })
             .setColor(client.config.color);
 
         const dismissButton = client.components.getButton('dismiss', true);
