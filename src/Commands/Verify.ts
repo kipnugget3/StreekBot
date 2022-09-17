@@ -1,11 +1,50 @@
-import { ActionRowBuilder, EmbedBuilder, GuildTextBasedChannel, MessageActionRowComponentBuilder } from 'discord.js';
+import {
+    ActionRowBuilder,
+    APIEmbedField,
+    EmbedBuilder,
+    GuildTextBasedChannel,
+    inlineCode,
+    MessageActionRowComponentBuilder,
+    userMention,
+} from 'discord.js';
 import { SlashCommand } from '../Structures';
 
 export default new SlashCommand()
     .setName('verify')
-    .setDescription('Send the verify message.')
+    .setDescription('Manage the verification system.')
     .setDMPermission(false)
     .setDefaultMemberPermissions(0n)
+    .addSubcommandGroup(group =>
+        group
+            .setName('users')
+            .setDescription('Manage verified users.')
+            .addSubcommand(subcommand => subcommand.setName('list').setDescription('List all verified users.'))
+            .addSubcommand(subcommand =>
+                subcommand
+                    .setName('add')
+                    .setDescription('Manually verify a user.')
+                    .addUserOption(option =>
+                        option.setName('user').setDescription('The user to verify.').setRequired(true)
+                    )
+                    .addStringOption(option =>
+                        option.setName('name').setDescription('The name of the user.').setRequired(true)
+                    )
+                    .addStringOption(option =>
+                        option
+                            .setName('student-number')
+                            .setDescription('The student number of the user.')
+                            .setRequired(true)
+                    )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                    .setName('remove')
+                    .setDescription('Remove a verified user.')
+                    .addUserOption(option =>
+                        option.setName('user').setDescription('The user to remove.').setRequired(true)
+                    )
+            )
+    )
     .addSubcommandGroup(group =>
         group
             .setName('message')
@@ -20,22 +59,89 @@ export default new SlashCommand()
             )
     )
     .setCallback(async interaction => {
-        await interaction.reply('Processing...');
-        await interaction.deleteReply();
+        await interaction.deferReply({ ephemeral: true });
 
         const { client, options } = interaction;
 
-        const channel = (options.getChannel('channel') as GuildTextBasedChannel) ?? interaction.channel;
+        const group = options.getSubcommandGroup(true);
+        const subcommand = options.getSubcommand(true);
 
-        const embed = new EmbedBuilder()
-            .setDescription('Om toegang tot de server te krijgen, klik op de knop onder dit bericht.')
-            .setImage('https://i.imgur.com/zulMmYv.gif')
-            .setColor(client.config.color);
+        const { verifiedRoleId } = await client.getServerConfigSchema();
 
-        const verifyButton = client.components.getButton('verify', true);
-        const helpButton = client.components.getButton('help', true);
+        const verifyUsers = await client.verificationCollection.find().toArray();
 
-        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(verifyButton, helpButton);
+        switch (group) {
+            case 'users': {
+                switch (subcommand) {
+                    case 'list': {
+                        const fields: APIEmbedField[] = verifyUsers.map(user => ({
+                            name: user.naam,
+                            value:
+                                `User: ${userMention(user.userId)}\n` +
+                                `Leerlingnummer: ${inlineCode(user.leerlingnummer)}`,
+                        }));
 
-        await channel.send({ embeds: [embed], components: [row] });
+                        const embed = new EmbedBuilder().setTitle('Verified users').addFields(fields).setTimestamp();
+
+                        return interaction.editReply({ embeds: [embed] });
+                    }
+                    case 'add': {
+                        const user = options.getUser('user', true);
+                        const name = options.getString('name', true);
+                        const studentNumber = options.getString('student-number', true);
+
+                        const member = await interaction.guild.members.fetch(user.id);
+
+                        await client.verificationCollection.insertOne({
+                            userId: user.id,
+                            naam: name,
+                            leerlingnummer: studentNumber,
+                        });
+
+                        await member.roles.add(verifiedRoleId);
+
+                        return interaction.editReply('Succesfully verified that user.');
+                    }
+                    case 'remove': {
+                        const user = options.getUser('user', true);
+
+                        await client.verificationCollection.deleteOne({ userId: user.id });
+
+                        const member = await interaction.guild.members.fetch(user.id).catch(() => null);
+
+                        if (member) await member.roles.remove(verifiedRoleId);
+
+                        return interaction.editReply('Succesfully unverified that user.');
+                    }
+                    default:
+                        return;
+                }
+            }
+            case 'message': {
+                switch (subcommand) {
+                    case 'send': {
+                        const channel = (options.getChannel('channel') as GuildTextBasedChannel) ?? interaction.channel;
+
+                        const embed = new EmbedBuilder()
+                            .setDescription('Om toegang tot de server te krijgen, klik op de knop onder dit bericht.')
+                            .setImage('https://i.imgur.com/zulMmYv.gif')
+                            .setColor(client.config.color);
+
+                        const verifyButton = client.components.getButton('verify', true);
+                        const helpButton = client.components.getButton('help', true);
+
+                        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+                            verifyButton,
+                            helpButton
+                        );
+
+                        await interaction.deleteReply();
+
+                        return channel.send({ embeds: [embed], components: [row] });
+                    }
+                    default:
+                        return;
+                }
+            }
+        }
     });

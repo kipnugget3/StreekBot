@@ -1,18 +1,5 @@
-import {
-    ActionRowBuilder,
-    EmbedBuilder,
-    GuildTextBasedChannel,
-    inlineCode,
-    MessageActionRowComponentBuilder,
-    roleMention,
-    TextInputStyle,
-    userMention,
-} from 'discord.js';
-import {
-    throwVerifiedRoleNotFoundError,
-    throwVerifyErrorsChannelNotFoundError,
-    throwVerifyLogsChannelNotFoundError,
-} from '../Errors';
+import { EmbedBuilder, GuildTextBasedChannel, inlineCode, roleMention, TextInputStyle, userMention } from 'discord.js';
+import { throwVerifyErrorsChannelNotFoundError, throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
 
 export default new Modal()
@@ -20,14 +7,14 @@ export default new Modal()
     .setTitle('Verify jezelf.')
     .addModalComponents(
         new TextInput()
-            .setCustomId('naam')
-            .setLabel('Je voornaam en achternaam')
+            .setCustomId('name')
+            .setLabel('Je voor- en achternaam')
             .setStyle(TextInputStyle.Paragraph)
             .setMinLength(1)
             .setMaxLength(300)
             .setRequired(true),
         new TextInput()
-            .setCustomId('leerlingnummer')
+            .setCustomId('student_number')
             .setLabel('Leerlingnummer')
             .setStyle(TextInputStyle.Short)
             .setMinLength(5)
@@ -36,15 +23,13 @@ export default new Modal()
     .setCallback(async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
-        const name = interaction.fields.getTextInputValue('naam');
-        const studentNumber = interaction.fields.getTextInputValue('leerlingnummer');
+        const name = interaction.fields.getTextInputValue('name');
+        const studentNumber = interaction.fields.getTextInputValue('student_number');
 
         const { client, guild, member, user } = interaction;
 
         const { staffRoleId, verifiedRoleId, verifyErrorsChannelId, verifyLogsChannelId } =
             await client.getServerConfigSchema();
-
-        const verifiedRole = guild.roles.cache.ensure(verifiedRoleId, throwVerifiedRoleNotFoundError);
 
         const verifyErrorsChannel = guild.channels.cache.ensure(
             verifyErrorsChannelId,
@@ -56,7 +41,10 @@ export default new Modal()
             throwVerifyLogsChannelNotFoundError
         ) as GuildTextBasedChannel;
 
-        if (!/^\d{5}$/.test(studentNumber)) {
+        const studentNumberIsValid =
+            /^\d{5}$/.test(studentNumber) && parseInt(studentNumber) > 15_000 && parseInt(studentNumber) < 23_000;
+
+        if (!studentNumberIsValid) {
             const embed = new EmbedBuilder()
                 .setDescription(`Gebruik een geldig leerlingnummer.`)
                 .setColor(client.config.color);
@@ -66,27 +54,7 @@ export default new Modal()
 
         const verifyUsers = await client.verificationCollection.find().toArray();
 
-        const verifyUserWithUserId = verifyUsers.find(u => u.userId === user.id);
-
-        if (verifyUserWithUserId) {
-            const embed = new EmbedBuilder()
-                .setDescription(
-                    `Je bent al verified! Je bent verified met leerlingnummer \`${verifyUserWithUserId.leerlingnummer}\` en naam \`${verifyUserWithUserId.naam}\``
-                )
-                .setColor(client.config.color);
-
-            return interaction.editReply({ embeds: [embed] });
-        }
-
         const verifyUserWithStudentNumber = verifyUsers.find(user => user.leerlingnummer === studentNumber);
-
-        if (parseInt(studentNumber) > 24000 || parseInt(studentNumber) < 15000) {
-            const embed = new EmbedBuilder()
-                .setDescription(`Gebruik een geldig leerlingnummer.`)
-                .setColor(client.config.color);
-
-            return interaction.editReply({ embeds: [embed] });
-        }
 
         if (verifyUserWithStudentNumber) {
             const embed = new EmbedBuilder()
@@ -136,17 +104,14 @@ export default new Modal()
             leerlingnummer: studentNumber,
         });
 
-        await member.roles.add(verifiedRole);
+        await member.roles.add(verifiedRoleId);
 
-        await interaction.editReply('You are now verified.');
+        await interaction.editReply('Je bent nu geverifieerd!');
 
         const embed = new EmbedBuilder()
-            .setDescription(`${user} is geverifieërd!`)
+            .setDescription(`${user} is geverifieerd!`)
             .addFields({ name: 'Leerlingnummer', value: studentNumber }, { name: 'Naam', value: name })
             .setColor(client.config.color);
 
-        const dismissButton = client.components.getButton('dismiss', true);
-        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(dismissButton);
-
-        await verifyLogsChannel.send({ embeds: [embed], components: [row] });
+        await verifyLogsChannel.send({ embeds: [embed] });
     });

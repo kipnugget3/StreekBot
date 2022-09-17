@@ -4,6 +4,8 @@ import { SlashCommand } from '../Structures';
 export default new SlashCommand()
     .setName('welcome')
     .setDescription('Manages the welcome system.')
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(0n)
     .addSubcommandGroup(group =>
         group
             .setName('messages')
