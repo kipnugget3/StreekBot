@@ -12,9 +12,7 @@ export interface ServerConfigSchema {
     verificationSupportRoleId: Snowflake;
 
     logChannelId: Snowflake;
-    verifyErrorsChannelId: Snowflake;
     verifyLogsChannelId: Snowflake;
-    verifySupportChannelId: Snowflake;
 
     welcomeChannelId: Snowflake;
     leaveMessages: string[];

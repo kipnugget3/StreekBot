@@ -1,5 +1,5 @@
 import { EmbedBuilder, GuildTextBasedChannel, inlineCode, roleMention, TextInputStyle, userMention } from 'discord.js';
-import { throwVerifyErrorsChannelNotFoundError, throwVerifyLogsChannelNotFoundError } from '../Errors';
+import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
 
 export default new Modal()
@@ -28,13 +28,7 @@ export default new Modal()
 
         const { client, guild, member, user } = interaction;
 
-        const { staffRoleId, verifiedRoleId, verifyErrorsChannelId, verifyLogsChannelId } =
-            await client.getServerConfigSchema();
-
-        const verifyErrorsChannel = guild.channels.cache.ensure(
-            verifyErrorsChannelId,
-            throwVerifyErrorsChannelNotFoundError
-        ) as GuildTextBasedChannel;
+        const { staffRoleId, verifiedRoleId, verifyLogsChannelId } = await client.getServerConfigSchema();
 
         const verifyLogsChannel = guild.channels.cache.ensure(
             verifyLogsChannelId,
@@ -65,7 +59,7 @@ export default new Modal()
                 )
                 .setColor(client.config.color);
 
-            await verifyErrorsChannel.send({ content: roleMention(staffRoleId), embeds: [embed] });
+            await verifyLogsChannel.send({ content: roleMention(staffRoleId), embeds: [embed] });
 
             const interactionEmbed = new EmbedBuilder()
                 .setDescription(
@@ -87,7 +81,7 @@ export default new Modal()
                 )
                 .setColor(client.config.color);
 
-            await verifyErrorsChannel.send({ content: roleMention(staffRoleId), embeds: [embed] });
+            await verifyLogsChannel.send({ content: roleMention(staffRoleId), embeds: [embed] });
 
             const interactionEmbed = new EmbedBuilder()
                 .setDescription(

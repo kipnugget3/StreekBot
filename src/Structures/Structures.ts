@@ -38,17 +38,19 @@ function BaseStructure(type: StructureType) {
 
                     if (!interaction.isRepliable()) return;
 
-                    const message = 'Er is iets misgegaan!';
+                    const content = 'Er is iets misgegaan!';
 
                     await (interaction.deferred || interaction.replied
-                        ? interaction
-                              .editReply({ content: message, embeds: [], components: [] })
-                              .catch(() => interaction.followUp({ content: message, ephemeral: true }))
-                              .catch(() => interaction.channel?.send(message))
-                              .catch(() => null)
+                        ? interaction.ephemeral
+                            ? interaction.editReply({ content, embeds: [], components: [] })
+                            : interaction
+                                  .deleteReply()
+                                  .catch(() => null)
+                                  .then(() => interaction.followUp({ content, ephemeral: true }))
+                                  .catch(() => null)
                         : interaction
-                              .reply({ content: message, ephemeral: true })
-                              .catch(() => interaction.channel?.send(message))
+                              .reply({ content: content, ephemeral: true })
+                              .catch(() => interaction.channel?.send(content))
                               .catch(() => null));
                 }
             }

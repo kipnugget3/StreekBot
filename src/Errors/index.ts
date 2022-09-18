@@ -16,10 +16,6 @@ export const throwVerificationSupportRoleNotFoundError = () => throwError('Verif
 
 export const throwLogChannelNotFoundError = () => throwError('Log channel not found.');
 
-export const throwVerifyErrorsChannelNotFoundError = () => throwError('Verify errors channel not found.');
-
 export const throwVerifyLogsChannelNotFoundError = () => throwError('Verify logs channel not found.');
-
-export const throwVerifySupportChannelNotFoundError = () => throwError('Verify support channel not found.');
 
 export const throwWelcomeChannelNotFoundError = () => throwError('Welcome channel not found.');

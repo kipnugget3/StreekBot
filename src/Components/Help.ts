@@ -1,7 +1,7 @@
 import { setTimeout } from 'node:timers';
 import { ButtonStyle, EmbedBuilder, GuildTextBasedChannel, roleMention, Snowflake } from 'discord.js';
 import { Button } from '../Structures';
-import { throwVerifySupportChannelNotFoundError } from '../Errors';
+import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 
 const cooldowns = new Map<Snowflake, number>();
 
@@ -34,18 +34,18 @@ export default new Button()
 
         setTimeout(() => cooldowns.delete(user.id), cooldownAmount);
 
-        const { verifySupportChannelId, verificationSupportRoleId } = await client.getServerConfigSchema();
+        const { verificationSupportRoleId, verifyLogsChannelId } = await client.getServerConfigSchema();
 
-        const verifySupportChannel = guild.channels.cache.ensure(
-            verifySupportChannelId,
-            throwVerifySupportChannelNotFoundError
+        const verifyLogsChannel = guild.channels.cache.ensure(
+            verifyLogsChannelId,
+            throwVerifyLogsChannelNotFoundError
         ) as GuildTextBasedChannel;
 
         const embed = new EmbedBuilder()
             .setDescription(`${user} heeft hulp nodig met verifiëren!`)
             .setColor(client.config.color);
 
-        await verifySupportChannel.send({ content: roleMention(verificationSupportRoleId), embeds: [embed] });
+        await verifyLogsChannel.send({ content: roleMention(verificationSupportRoleId), embeds: [embed] });
 
         await interaction.editReply('Staff is geinformeerd dat je hulp nodig hebt.');
     });
