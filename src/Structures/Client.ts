@@ -68,7 +68,7 @@ export class Client extends BaseClient {
             token: env.DISCORD_TOKEN,
             mongoUri: env.MONGO_URI,
             webhookURL: env.WEBHOOK_URL,
-            color: 0x36393f,
+            color: 0x5d2f88,
         };
 
         this.logger = new Logger(this);
