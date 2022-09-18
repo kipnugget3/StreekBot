@@ -59,7 +59,7 @@ export default new SlashCommand()
             )
     )
     .setCallback(async interaction => {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply();
 
         const { client, options } = interaction;
 
