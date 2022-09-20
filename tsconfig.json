@@ -19,7 +19,6 @@
         "importsNotUsedAsValues": "error",
         "newLine": "lf",
         "outDir": "dist",
-        // "preserveValueImports": true, // Take a closer look at this
 
         // Interop Constraits
         "esModuleInterop": true,

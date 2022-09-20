@@ -14,7 +14,7 @@
         "test": "npm run lint",
         "prettier": "prettier --write .",
         "prepare": "husky install",
-        "contabo-build": "npm ci && tsc && npm prune --omit=dev",
+        "contabo-build": "npm ci && npm run build && npm prune --omit=dev",
         "contabo": "npm start"
     },
     "repository": {
