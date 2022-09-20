@@ -21,9 +21,6 @@
         "type": "git",
         "url": "git+https://github.com/HetStreek/StreekBot.git"
     },
-    "keywords": [
-        "quabot"
-    ],
     "author": {
         "name": "Manuel van Leeuwen",
         "email": "17489@hetstreek.nl",
