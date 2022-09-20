@@ -8,6 +8,7 @@ import {
     userMention,
 } from 'discord.js';
 import { SlashCommand } from '../Structures';
+import { embedPages } from '../Util';
 
 export default new SlashCommand()
     .setName('verify')
@@ -81,9 +82,9 @@ export default new SlashCommand()
                                 `Leerlingnummer: ${inlineCode(user.leerlingnummer)}`,
                         }));
 
-                        const embed = new EmbedBuilder().setTitle('Verified users').addFields(fields).setTimestamp();
+                        const embed = new EmbedBuilder().setTitle('Verified users').setTimestamp();
 
-                        return interaction.editReply({ embeds: [embed] });
+                        return embedPages(interaction, embed, fields);
                     }
                     case 'add': {
                         const user = options.getUser('user', true);

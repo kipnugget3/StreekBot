@@ -14,11 +14,11 @@ export default new ClientEvent({
 
                 switch (commandType) {
                     case ApplicationCommandType.ChatInput:
-                        return client.commands.getSlashCommand(commandName, true).run(interaction);
+                        return client.commands.getSlashCommand(commandName)?.run(interaction);
                     case ApplicationCommandType.User:
-                        return client.commands.getUserContextMenu(commandName, true).run(interaction);
+                        return client.commands.getUserContextMenu(commandName)?.run(interaction);
                     case ApplicationCommandType.Message:
-                        return client.commands.getMessageContextMenu(commandName, true).run(interaction);
+                        return client.commands.getMessageContextMenu(commandName)?.run(interaction);
                     default:
                         client.logger.warn(`Received unknown application command type: ${commandType}`);
                         return client.components.get(commandName, true).run(interaction);
@@ -29,18 +29,18 @@ export default new ClientEvent({
 
                 switch (componentType) {
                     case ComponentType.Button:
-                        return client.components.getButton(customId, true).run(interaction);
+                        return client.components.getButton(customId)?.run(interaction);
                     case ComponentType.SelectMenu:
-                        return client.components.getSelectMenu(customId, true).run(interaction);
+                        return client.components.getSelectMenu(customId)?.run(interaction);
                     default:
                         client.logger.warn(`Received unknown component type: ${componentType}`);
                         return client.components.get(customId, true).run(interaction);
                 }
             }
             case InteractionType.ApplicationCommandAutocomplete:
-                return client.autocompletes.get(interaction.commandName, true).run(interaction);
+                return client.autocompletes.get(interaction.commandName)?.run(interaction);
             case InteractionType.ModalSubmit:
-                return client.modals.get(interaction.customId, true).run(interaction);
+                return client.modals.get(interaction.customId)?.run(interaction);
         }
     },
 });

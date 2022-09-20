@@ -42,14 +42,17 @@ function BaseStructure(type: StructureType) {
 
                     await (interaction.deferred || interaction.replied
                         ? interaction.ephemeral
-                            ? interaction.editReply({ content, embeds: [], components: [] })
+                            ? interaction
+                                  .editReply({ content, embeds: [], components: [] })
+                                  .catch(() => interaction.followUp({ content, ephemeral: true }))
+                                  .catch(() => null)
                             : interaction
                                   .deleteReply()
                                   .catch(() => null)
                                   .then(() => interaction.followUp({ content, ephemeral: true }))
                                   .catch(() => null)
                         : interaction
-                              .reply({ content: content, ephemeral: true })
+                              .reply({ content, ephemeral: true })
                               .catch(() => interaction.channel?.send(content))
                               .catch(() => null));
                 }
