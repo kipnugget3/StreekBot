@@ -14,6 +14,9 @@ export interface ServerConfigSchema {
     logChannelId: Snowflake;
     verifyLogsChannelId: Snowflake;
 
+    dailyQuestionsChannelId: Snowflake;
+    dailyQuestions: string[];
+
     welcomeChannelId: Snowflake;
     leaveMessages: string[];
     welcomeMessages: string[];

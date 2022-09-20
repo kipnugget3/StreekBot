@@ -14,6 +14,8 @@ export const throwVerifiedRoleNotFoundError = () => throwError('Verified role no
 
 export const throwVerificationSupportRoleNotFoundError = () => throwError('Verification support role not found.');
 
+export const throwDailyQuestionsChannelNotFoundError = () => throwError('Daily questions channel not found.');
+
 export const throwLogChannelNotFoundError = () => throwError('Log channel not found.');
 
 export const throwVerifyLogsChannelNotFoundError = () => throwError('Verify logs channel not found.');
