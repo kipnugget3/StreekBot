@@ -8,14 +8,13 @@
         "lint": "eslint src --ext .ts --cache",
         "lint:fix": "eslint src --ext .ts --cache --fix",
         "dev": "nodemon",
-        "prebuild": "rimraf ./dist",
-        "build": "tsc",
+        "prebuild": "npm ci",
+        "build": "rimraf ./dist && tsc",
+        "postbuild": "npm prune --omit=dev",
         "start": "node dist/index.js",
         "test": "npm run lint",
         "prettier": "prettier --write .",
-        "prepare": "husky install",
-        "contabo-build": "npm ci && npm run build && npm prune --omit=dev",
-        "contabo": "npm start"
+        "prepare": "husky install"
     },
     "repository": {
         "type": "git",
@@ -37,7 +36,7 @@
     },
     "homepage": "https://github.com/HetStreek/StreekBot#readme",
     "dependencies": {
-        "discord.js": "^14.3.0",
+        "discord.js": "^14.4.0",
         "mongodb": "^4.9.1",
         "node-schedule": "^2.1.0"
     },
