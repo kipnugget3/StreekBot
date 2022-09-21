@@ -67,10 +67,10 @@ export default new SlashCommand()
             case 'messages': {
                 switch (subcommand) {
                     case 'list': {
-                        const embed = new EmbedBuilder()
-                            .setTitle('Welcome Messages')
-                            .addFields(welcomeMessages.map((msg, idx) => ({ name: `#${idx}`, value: msg })))
-                            .setTimestamp();
+                        const embed = new EmbedBuilder().setTitle('Welcome Messages').setTimestamp();
+
+                        if (welcomeMessages.length)
+                            embed.setFields(welcomeMessages.map((msg, idx) => ({ name: `#${idx}`, value: msg })));
 
                         return interaction.editReply({ embeds: [embed] });
                     }
@@ -101,10 +101,10 @@ export default new SlashCommand()
             case 'leave-messages': {
                 switch (subcommand) {
                     case 'list': {
-                        const embed = new EmbedBuilder()
-                            .setTitle('Leave Messages')
-                            .addFields(leaveMessages.map((msg, idx) => ({ name: `#${idx}`, value: msg })))
-                            .setTimestamp(0);
+                        const embed = new EmbedBuilder().setTitle('Leave Messages').setTimestamp();
+
+                        if (leaveMessages.length)
+                            embed.setFields(leaveMessages.map((msg, idx) => ({ name: `#${idx}`, value: msg })));
 
                         return interaction.editReply({ embeds: [embed] });
                     }

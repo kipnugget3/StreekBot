@@ -6,6 +6,7 @@ export default new SlashCommand()
     .setDescription('Manage the daily questions.')
     .setDMPermission(false)
     .setDefaultMemberPermissions(0n)
+    .addSubcommand(subcommand => subcommand.setName('list').setDescription('List all the daily questions.'))
     .addSubcommand(subcommand =>
         subcommand
             .setName('add')
@@ -22,7 +23,6 @@ export default new SlashCommand()
                 option.setName('index').setDescription('The index of the question to remove.').setRequired(true)
             )
     )
-    .addSubcommand(subcommand => subcommand.setName('list').setDescription('List all the daily questions.'))
     .setCallback(async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
@@ -38,6 +38,14 @@ export default new SlashCommand()
             new EmbedBuilder().setTitle('Success').setDescription(description).setColor(config.color);
 
         switch (subcommand) {
+            case 'list': {
+                const embed = new EmbedBuilder().setTitle('Daily Questions').setTimestamp();
+
+                if (dailyQuestions.length)
+                    embed.setFields(dailyQuestions.map((msg, idx) => ({ name: `#${idx}`, value: msg })));
+
+                return interaction.editReply({ embeds: [embed] });
+            }
             case 'add': {
                 const question = interaction.options.getString('question', true);
 
@@ -55,14 +63,6 @@ export default new SlashCommand()
                 await serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
 
                 const embed = successEmbed('Daily question successfully removed.');
-
-                return interaction.editReply({ embeds: [embed] });
-            }
-            case 'list': {
-                const embed = new EmbedBuilder()
-                    .setTitle('Daily Questions')
-                    .setTimestamp()
-                    .addFields(dailyQuestions.map((msg, idx) => ({ name: `#${idx}`, value: msg })));
 
                 return interaction.editReply({ embeds: [embed] });
             }
