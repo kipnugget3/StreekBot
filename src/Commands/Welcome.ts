@@ -1,5 +1,6 @@
-import { EmbedBuilder } from 'discord.js';
+import { APIEmbedField, EmbedBuilder } from 'discord.js';
 import { SlashCommand } from '../Structures';
+import { embedPages } from '../Util';
 
 export default new SlashCommand()
     .setName('welcome')
@@ -69,10 +70,12 @@ export default new SlashCommand()
                     case 'list': {
                         const embed = new EmbedBuilder().setTitle('Welcome Messages').setTimestamp();
 
-                        if (welcomeMessages.length)
-                            embed.setFields(welcomeMessages.map((msg, idx) => ({ name: `#${idx}`, value: msg })));
+                        const fields: APIEmbedField[] = welcomeMessages.map((msg, idx) => ({
+                            name: `#${idx + 1}`,
+                            value: msg,
+                        }));
 
-                        return interaction.editReply({ embeds: [embed] });
+                        return embedPages(interaction, embed, fields);
                     }
                     case 'add': {
                         const message = interaction.options.getString('message', true);
@@ -86,7 +89,10 @@ export default new SlashCommand()
                     case 'remove': {
                         const index = interaction.options.getInteger('index', true);
 
-                        welcomeMessages.splice(index, 1);
+                        if (index < 1 || index > welcomeMessages.length)
+                            return interaction.editReply('Please provide a valid index.');
+
+                        welcomeMessages.splice(index - 1, 1);
 
                         await serverConfigCollection.updateOne({ _id }, { $set: { welcomeMessages } });
 
@@ -103,10 +109,12 @@ export default new SlashCommand()
                     case 'list': {
                         const embed = new EmbedBuilder().setTitle('Leave Messages').setTimestamp();
 
-                        if (leaveMessages.length)
-                            embed.setFields(leaveMessages.map((msg, idx) => ({ name: `#${idx}`, value: msg })));
+                        const fields: APIEmbedField[] = leaveMessages.map((msg, idx) => ({
+                            name: `#${idx + 1}`,
+                            value: msg,
+                        }));
 
-                        return interaction.editReply({ embeds: [embed] });
+                        return embedPages(interaction, embed, fields);
                     }
                     case 'add': {
                         const message = interaction.options.getString('message', true);
@@ -120,7 +128,10 @@ export default new SlashCommand()
                     case 'remove': {
                         const index = interaction.options.getInteger('index', true);
 
-                        leaveMessages.splice(index, 1);
+                        if (index < 1 || index > leaveMessages.length)
+                            return interaction.editReply('Please provide a valid index.');
+
+                        leaveMessages.splice(index - 1, 1);
 
                         await serverConfigCollection.updateOne({ _id }, { $set: { leaveMessages } });
 

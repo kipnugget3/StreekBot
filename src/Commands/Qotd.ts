@@ -1,5 +1,6 @@
-import { EmbedBuilder } from 'discord.js';
+import { APIEmbedField, EmbedBuilder } from 'discord.js';
 import { SlashCommand } from '../Structures';
+import { embedPages } from '../Util';
 
 export default new SlashCommand()
     .setName('qotd')
@@ -41,10 +42,9 @@ export default new SlashCommand()
             case 'list': {
                 const embed = new EmbedBuilder().setTitle('Daily Questions').setTimestamp();
 
-                if (dailyQuestions.length)
-                    embed.setFields(dailyQuestions.map((msg, idx) => ({ name: `#${idx}`, value: msg })));
+                const fields: APIEmbedField[] = dailyQuestions.map((msg, idx) => ({ name: `#${idx + 1}`, value: msg }));
 
-                return interaction.editReply({ embeds: [embed] });
+                return embedPages(interaction, embed, fields);
             }
             case 'add': {
                 const question = interaction.options.getString('question', true);
@@ -58,7 +58,10 @@ export default new SlashCommand()
             case 'remove': {
                 const index = interaction.options.getInteger('index', true);
 
-                dailyQuestions.splice(index, 1);
+                if (index < 1 || index > dailyQuestions.length)
+                    return interaction.editReply('Please provide a valid index.');
+
+                dailyQuestions.splice(index - 1, 1);
 
                 await serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
 

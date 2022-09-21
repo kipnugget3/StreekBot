@@ -84,7 +84,7 @@ export default new SlashCommand()
 
                         const embed = new EmbedBuilder().setTitle('Verified users').setTimestamp();
 
-                        return embedPages(interaction, embed, fields, 5);
+                        return embedPages(interaction, embed, fields);
                     }
                     case 'add': {
                         const user = options.getUser('user', true);

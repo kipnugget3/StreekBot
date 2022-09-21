@@ -42,7 +42,7 @@ export async function embedPages(
     interaction: Interaction<'cached'>,
     embed: EmbedBuilder,
     fields: APIEmbedField[],
-    perPage = 10
+    perPage = 5
 ) {
     if (!interaction.isRepliable()) throw new Error('Interaction is not repliable.');
 
