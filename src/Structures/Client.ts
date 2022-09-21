@@ -1,11 +1,5 @@
 import { env } from 'node:process';
-import {
-    Client as BaseClient,
-    GuildTextBasedChannel,
-    type ClientApplication,
-    type ClientOptions,
-    type ClientUser,
-} from 'discord.js';
+import { Client as BaseClient, type ClientApplication, type ClientOptions, type ClientUser } from 'discord.js';
 import { type Collection, type Db, MongoClient, WithId } from 'mongodb';
 import { AutocompleteManager, CommandManager, ComponentManager, EventManager, ModalManager } from './Managers';
 import { Logger } from './Logger';
@@ -44,7 +38,6 @@ declare module 'discord.js' {
         database: Db;
 
         getServerConfigSchema(): Promise<WithId<ServerConfigSchema>>;
-        fetchLogChannel(): Promise<GuildTextBasedChannel>;
 
         get verificationCollection(): Collection<VerifySchema>;
         get serverConfigCollection(): Collection<ServerConfigSchema>;
@@ -93,12 +86,6 @@ export class Client extends BaseClient {
         if (!schema) throw new Error('No server config schema found.');
 
         return schema;
-    }
-
-    override async fetchLogChannel() {
-        const { logChannelId } = await this.getServerConfigSchema();
-
-        return this.channels.fetch(logChannelId) as Promise<GuildTextBasedChannel>;
     }
 
     override get verificationCollection(): Collection<VerifySchema> {
