@@ -61,14 +61,14 @@ export default new SlashCommand()
 
         const { _id, leaveMessages, welcomeMessages } = await interaction.client.getServerConfigSchema();
 
-        const successEmbed = (description: string) =>
-            new EmbedBuilder().setTitle('Success').setDescription(description).setColor(config.color);
-
         switch (group) {
             case 'messages': {
                 switch (subcommand) {
                     case 'list': {
-                        const embed = new EmbedBuilder().setTitle('Welcome Messages').setTimestamp();
+                        const embed = new EmbedBuilder()
+                            .setTitle('Welcome Messages')
+                            .setColor(config.color)
+                            .setTimestamp();
 
                         const fields: APIEmbedField[] = welcomeMessages.map((msg, idx) => ({
                             name: `#${idx + 1}`,
@@ -82,7 +82,10 @@ export default new SlashCommand()
 
                         await serverConfigCollection.updateOne({ _id }, { $push: { welcomeMessages: message } });
 
-                        const embed = successEmbed('Welcome message successfully added.');
+                        const embed = new EmbedBuilder()
+                            .setTitle('Welcome Message Added')
+                            .setDescription(message)
+                            .setColor(config.color);
 
                         return interaction.editReply({ embeds: [embed] });
                     }
@@ -92,11 +95,14 @@ export default new SlashCommand()
                         if (index < 1 || index > welcomeMessages.length)
                             return interaction.editReply('Please provide a valid index.');
 
-                        welcomeMessages.splice(index - 1, 1);
+                        const message = welcomeMessages.splice(index - 1, 1)[0];
 
                         await serverConfigCollection.updateOne({ _id }, { $set: { welcomeMessages } });
 
-                        const embed = successEmbed('Welcome message successfully removed.');
+                        const embed = new EmbedBuilder()
+                            .setTitle('Welcome Message Removed')
+                            .setDescription(message)
+                            .setColor(config.color);
 
                         return interaction.editReply({ embeds: [embed] });
                     }
@@ -107,7 +113,10 @@ export default new SlashCommand()
             case 'leave-messages': {
                 switch (subcommand) {
                     case 'list': {
-                        const embed = new EmbedBuilder().setTitle('Leave Messages').setTimestamp();
+                        const embed = new EmbedBuilder()
+                            .setTitle('Leave Messages')
+                            .setColor(config.color)
+                            .setTimestamp();
 
                         const fields: APIEmbedField[] = leaveMessages.map((msg, idx) => ({
                             name: `#${idx + 1}`,
@@ -121,7 +130,10 @@ export default new SlashCommand()
 
                         await serverConfigCollection.updateOne({ _id }, { $push: { leaveMessages: message } });
 
-                        const embed = successEmbed('Leave message successfully added.');
+                        const embed = new EmbedBuilder()
+                            .setTitle('Leave Message Added')
+                            .setDescription(message)
+                            .setColor(config.color);
 
                         return interaction.editReply({ embeds: [embed] });
                     }
@@ -131,11 +143,14 @@ export default new SlashCommand()
                         if (index < 1 || index > leaveMessages.length)
                             return interaction.editReply('Please provide a valid index.');
 
-                        leaveMessages.splice(index - 1, 1);
+                        const message = leaveMessages.splice(index - 1, 1)[0];
 
                         await serverConfigCollection.updateOne({ _id }, { $set: { leaveMessages } });
 
-                        const embed = successEmbed('Leave message successfully removed.');
+                        const embed = new EmbedBuilder()
+                            .setTitle('Leave Message Removed')
+                            .setDescription(message)
+                            .setColor(config.color);
 
                         return interaction.editReply({ embeds: [embed] });
                     }

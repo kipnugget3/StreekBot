@@ -35,9 +35,6 @@ export default new SlashCommand()
 
         const { _id, dailyQuestions } = await client.getServerConfigSchema();
 
-        const successEmbed = (description: string) =>
-            new EmbedBuilder().setTitle('Success').setDescription(description).setColor(config.color);
-
         switch (subcommand) {
             case 'list': {
                 const embed = new EmbedBuilder().setTitle('Daily Questions').setTimestamp();
@@ -51,7 +48,10 @@ export default new SlashCommand()
 
                 await serverConfigCollection.updateOne({ _id }, { $push: { dailyQuestions: question } });
 
-                const embed = successEmbed('Daily question successfully added.');
+                const embed = new EmbedBuilder()
+                    .setTitle('Daily Question Added')
+                    .setDescription(question)
+                    .setColor(config.color);
 
                 return interaction.editReply({ embeds: [embed] });
             }
@@ -61,11 +61,14 @@ export default new SlashCommand()
                 if (index < 1 || index > dailyQuestions.length)
                     return interaction.editReply('Please provide a valid index.');
 
-                dailyQuestions.splice(index - 1, 1);
+                const question = dailyQuestions.splice(index - 1, 1)[0];
 
                 await serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
 
-                const embed = successEmbed('Daily question successfully removed.');
+                const embed = new EmbedBuilder()
+                    .setTitle('Daily Question Removed')
+                    .setDescription(question)
+                    .setColor(config.color);
 
                 return interaction.editReply({ embeds: [embed] });
             }
