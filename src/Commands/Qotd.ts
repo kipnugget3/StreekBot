@@ -25,7 +25,7 @@ export default new SlashCommand()
             )
     )
     .setCallback(async interaction => {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply();
 
         const { client, options } = interaction;
 
@@ -49,7 +49,7 @@ export default new SlashCommand()
             case 'add': {
                 const question = interaction.options.getString('question', true);
 
-                await serverConfigCollection.updateOne({}, { $push: { dailyQuestions: question } });
+                await serverConfigCollection.updateOne({ _id }, { $push: { dailyQuestions: question } });
 
                 const embed = successEmbed('Daily question successfully added.');
 
