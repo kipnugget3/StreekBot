@@ -2,4 +2,4 @@
 
 ## Contributing
 
-See the [contribution guide](.github/CONTRIBUTING.md).
+See the [contribution guide](https://github.com/HetStreek/.github/blob/main/.github/CONTRIBUTING.md).
