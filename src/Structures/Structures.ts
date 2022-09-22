@@ -51,10 +51,7 @@ function BaseStructure(type: StructureType) {
                                   .catch(() => null)
                                   .then(() => interaction.followUp({ content, ephemeral: true }))
                                   .catch(() => null)
-                        : interaction
-                              .reply({ content, ephemeral: true })
-                              .catch(() => interaction.channel?.send(content))
-                              .catch(() => null));
+                        : interaction.reply({ content, ephemeral: true }).catch(() => null));
                 }
             }
 
