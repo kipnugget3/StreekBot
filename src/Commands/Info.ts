@@ -1,6 +1,6 @@
 import os from 'node:os';
 import process from 'node:process';
-import { Client, codeBlock, EmbedBuilder, inlineCode, time, TimestampStyles } from 'discord.js';
+import { codeBlock, EmbedBuilder, inlineCode, time, TimestampStyles } from 'discord.js';
 import { SlashCommand } from '../Structures';
 
 export default new SlashCommand()
@@ -9,9 +9,7 @@ export default new SlashCommand()
     .setCallback(async interaction => {
         await interaction.deferReply();
 
-        // This can be destructured normally on next semver:minor release of discord.js,
-        // as all events will have a ready client.
-        const client = interaction.client as Client<true>;
+        const { client } = interaction;
 
         const totalMemoryMB = Math.round(os.totalmem() / 1024 / 1024);
         const freeMemoryMB = Math.round(os.freemem() / 1024 / 1024);

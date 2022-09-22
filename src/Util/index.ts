@@ -1,21 +1,18 @@
-import { ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonStyle, EmbedBuilder, Interaction } from 'discord.js';
+import {
+    ActionRowBuilder,
+    APIEmbedField,
+    ButtonBuilder,
+    ButtonStyle,
+    ComponentType,
+    EmbedBuilder,
+    Interaction,
+} from 'discord.js';
 
 export * from './Mongo';
+export * from './Symbols';
 
-export const kStructureType = Symbol('structureType');
-
-export const kCallback = Symbol('callback');
-
-export function cloneObject<T extends object>(obj: T): T {
-    return Object.assign(Object.create(obj), obj);
-}
-
-type NumberFromZeroToNine = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-
-type NumberWithPadding<N extends number> = N extends NumberFromZeroToNine ? `0${N}` : `${N}`;
-
-export function forcePadding<N extends number>(num: N): NumberWithPadding<N> {
-    return `${num < 10 ? '0' : ''}${num}` as NumberWithPadding<N>;
+export function forcePadding(num: number) {
+    return `${num < 10 ? '0' : ''}${num}`;
 }
 
 export function formatDate(format: string, timestamp = Date.now()) {
@@ -70,7 +67,7 @@ export async function embedPages(
 
     const message = await interaction.editReply({ embeds: [embed], components: [row] });
 
-    const collector = message.createMessageComponentCollector({ time: 60_000 });
+    const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60_000 });
 
     collector.on('collect', receivedInteraction => {
         if (receivedInteraction.user.id !== interaction.user.id) return;
@@ -87,8 +84,6 @@ export async function embedPages(
                 break;
             case 'last':
                 page = pages.length - 1;
-                break;
-            default:
                 break;
         }
 

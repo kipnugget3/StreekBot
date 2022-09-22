@@ -8,15 +8,7 @@ export function throwError(errorOrMessage?: Error | string, options?: ErrorOptio
     throw new Error(errorOrMessage, options);
 }
 
-export const throwStaffRoleNotFoundError = () => throwError('Staff role not found.');
-
-export const throwVerifiedRoleNotFoundError = () => throwError('Verified role not found.');
-
-export const throwVerificationSupportRoleNotFoundError = () => throwError('Verification support role not found.');
-
 export const throwDailyQuestionsChannelNotFoundError = () => throwError('Daily questions channel not found.');
-
-export const throwLogChannelNotFoundError = () => throwError('Log channel not found.');
 
 export const throwVerifyLogsChannelNotFoundError = () => throwError('Verify logs channel not found.');
 
