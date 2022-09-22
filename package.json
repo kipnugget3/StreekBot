@@ -14,7 +14,7 @@
         "test": "npm run lint",
         "prettier": "prettier --write .",
         "prepare": "husky install",
-        "deploy": "sh deploy.sh"
+        "deploy": "sh ./deploy.sh"
     },
     "repository": {
         "type": "git",

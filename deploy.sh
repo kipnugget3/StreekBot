@@ -1,23 +1,24 @@
 #!/bin/sh
 
+clear
 echo 'Pulling code from GitHub'
+echo
 git pull origin main
 
-echo '--------------------------------------------------'
-
+clear
 echo 'Installing dependencies'
+echo
 npm ci
 
-echo '--------------------------------------------------'
-
+clear
 echo 'Building'
+echo
 npm run build
 
-echo '--------------------------------------------------'
-
+clear
 echo 'Pruning devDependencies'
+echo
 npm prune --omit=dev
 
-echo '--------------------------------------------------'
-
+clear
 echo 'Deployed successfully!'
