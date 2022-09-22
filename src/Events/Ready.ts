@@ -37,7 +37,9 @@ export default new ClientEvent({
 
             const embed = new EmbedBuilder().setColor(client.config.color).setDescription(question).setTimestamp();
 
-            await dailyQuestionsChannel.send({ content: roleMention(qotdRoleId), embeds: [embed] });
+            const message = await dailyQuestionsChannel.send({ content: roleMention(qotdRoleId), embeds: [embed] });
+
+            await message.pin();
 
             dailyQuestions.splice(index, 1);
 
