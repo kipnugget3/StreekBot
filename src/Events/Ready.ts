@@ -1,5 +1,5 @@
 import { setInterval } from 'node:timers';
-import { ActivityType, EmbedBuilder, Events, GuildTextBasedChannel } from 'discord.js';
+import { ActivityType, EmbedBuilder, Events, GuildTextBasedChannel, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { ClientEvent } from '../Structures';
 import { throwDailyQuestionsChannelNotFoundError } from '../Errors';
@@ -22,7 +22,7 @@ export default new ClientEvent({
         rule.minute = rule.second = 0;
 
         scheduleJob(rule, async () => {
-            const { _id, dailyQuestions, dailyQuestionsChannelId } = await client.getServerConfigSchema();
+            const { _id, dailyQuestions, dailyQuestionsChannelId, qotdRoleId } = await client.getServerConfigSchema();
 
             const dailyQuestionsChannel = client.channels.cache.ensure(
                 dailyQuestionsChannelId,
@@ -37,7 +37,7 @@ export default new ClientEvent({
 
             const embed = new EmbedBuilder().setColor(client.config.color).setDescription(question).setTimestamp();
 
-            await dailyQuestionsChannel.send({ embeds: [embed] });
+            await dailyQuestionsChannel.send({ content: roleMention(qotdRoleId), embeds: [embed] });
 
             dailyQuestions.splice(index, 1);
 

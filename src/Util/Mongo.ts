@@ -7,6 +7,7 @@ export interface VerifySchema {
 }
 
 export interface ServerConfigSchema {
+    qotdRoleId: Snowflake;
     staffRoleId: Snowflake;
     verifiedRoleId: Snowflake;
     verificationSupportRoleId: Snowflake;
