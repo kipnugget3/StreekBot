@@ -21,7 +21,7 @@ export default new ClientEvent({
                         return client.commands.getMessageContextMenu(commandName)?.run(interaction);
                     default:
                         client.logger.warn(`Received unknown application command type: ${commandType}`);
-                        return client.components.get(commandName, true).run(interaction);
+                        return client.components.get(commandName)?.run(interaction);
                 }
             }
             case InteractionType.MessageComponent: {
@@ -34,11 +34,17 @@ export default new ClientEvent({
                         return client.components.getSelectMenu(customId)?.run(interaction);
                     default:
                         client.logger.warn(`Received unknown component type: ${componentType}`);
-                        return client.components.get(customId, true).run(interaction);
+                        return client.components.get(customId)?.run(interaction);
                 }
             }
-            case InteractionType.ApplicationCommandAutocomplete:
-                return client.autocompletes.get(interaction.commandName)?.run(interaction);
+            case InteractionType.ApplicationCommandAutocomplete: {
+                const { commandType, commandName } = interaction;
+
+                if (commandType !== ApplicationCommandType.ChatInput)
+                    client.logger.warn(`Received unknown application command type on autocomplete: ${commandType}`);
+
+                return client.autocompletes.get(commandName)?.run(interaction);
+            }
             case InteractionType.ModalSubmit:
                 return client.modals.get(interaction.customId)?.run(interaction);
         }

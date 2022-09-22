@@ -12,13 +12,12 @@ export interface ServerConfigSchema {
     verifiedRoleId: Snowflake;
     verificationSupportRoleId: Snowflake;
 
+    dailyQuestionsChannelId: Snowflake;
     logChannelId: Snowflake;
     verifyLogsChannelId: Snowflake;
-
-    dailyQuestionsChannelId: Snowflake;
-    dailyQuestions: string[];
-
     welcomeChannelId: Snowflake;
+
+    dailyQuestions: string[];
     leaveMessages: string[];
     welcomeMessages: string[];
 }

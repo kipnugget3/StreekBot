@@ -51,7 +51,7 @@ export default new Modal()
         const verifyUserWithStudentNumber = verifyUsers.find(user => user.leerlingnummer === studentNumber);
 
         if (verifyUserWithStudentNumber) {
-            const embed = new EmbedBuilder()
+            const logEmbed = new EmbedBuilder()
                 .setDescription(
                     `${user} probeerde met leerlingnummer \`${studentNumber}\` te verifiëren. ` +
                         `Dit leerlingnummer is al gebruikt door ${userMention(verifyUserWithStudentNumber.userId)}, ` +
@@ -59,7 +59,7 @@ export default new Modal()
                 )
                 .setColor(client.config.color);
 
-            await verifyLogsChannel.send({ content: roleMention(staffRoleId), embeds: [embed] });
+            await verifyLogsChannel.send({ content: roleMention(staffRoleId), embeds: [logEmbed] });
 
             const interactionEmbed = new EmbedBuilder()
                 .setDescription(
@@ -73,7 +73,7 @@ export default new Modal()
         const verifyUserWithName = verifyUsers.find(user => user.naam.toLowerCase() === name.toLowerCase());
 
         if (verifyUserWithName) {
-            const embed = new EmbedBuilder()
+            const logEmbed = new EmbedBuilder()
                 .setDescription(
                     `${user} probeerde met naam \`${name}\` te verifiëren. ` +
                         `Deze naam is al gebruikt door ${userMention(verifyUserWithName.userId)}, ` +
@@ -81,7 +81,7 @@ export default new Modal()
                 )
                 .setColor(client.config.color);
 
-            await verifyLogsChannel.send({ content: roleMention(staffRoleId), embeds: [embed] });
+            await verifyLogsChannel.send({ content: roleMention(staffRoleId), embeds: [logEmbed] });
 
             const interactionEmbed = new EmbedBuilder()
                 .setDescription(
@@ -102,10 +102,10 @@ export default new Modal()
 
         await interaction.editReply('Je bent nu geverifieerd!');
 
-        const embed = new EmbedBuilder()
+        const logEmbed = new EmbedBuilder()
             .setDescription(`${user} is geverifieerd!`)
             .addFields({ name: 'Leerlingnummer', value: studentNumber }, { name: 'Naam', value: name })
             .setColor(client.config.color);
 
-        await verifyLogsChannel.send({ embeds: [embed] });
+        await verifyLogsChannel.send({ embeds: [logEmbed] });
     });

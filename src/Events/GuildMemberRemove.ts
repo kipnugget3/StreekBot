@@ -7,9 +7,7 @@ export default new ClientEvent({
     run: async member => {
         const { client, guild, user } = member;
 
-        const schema = await client.getServerConfigSchema();
-
-        const { welcomeChannelId, leaveMessages } = schema;
+        const { welcomeChannelId, leaveMessages } = await client.getServerConfigSchema();
 
         await client.verificationCollection.deleteOne({ userId: user.id }).catch(() => null);
 

@@ -7,9 +7,7 @@ export default new ClientEvent({
     run: async member => {
         const { client, guild, user } = member;
 
-        const schema = await client.getServerConfigSchema();
-
-        const { welcomeChannelId, welcomeMessages } = schema;
+        const { welcomeChannelId, welcomeMessages } = await client.getServerConfigSchema();
 
         const welcomeChannel = guild.channels.cache.ensure(
             welcomeChannelId,
