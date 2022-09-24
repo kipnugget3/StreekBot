@@ -2,7 +2,7 @@ import { setInterval } from 'node:timers';
 import { ActivityType, EmbedBuilder, Events, GuildTextBasedChannel, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { ClientEvent } from '../Structures';
-import { throwDailyQuestionsChannelNotFoundError } from '../Errors';
+import { throwDailyQuestionsChannelNotFoundError, throwDailyDilemmasChannelNotFoundError } from '../Errors';
 
 export default new ClientEvent({
     name: Events.ClientReady,
@@ -22,26 +22,54 @@ export default new ClientEvent({
         rule.minute = rule.second = 0;
 
         scheduleJob(rule, async () => {
-            const { _id, dailyQuestions, dailyQuestionsChannelId, qotdRoleId } = await client.getServerConfigSchema();
+            const {
+                _id,
+                dailyDilemmas,
+                dailyQuestions,
+                dailyDilemmaChannelId,
+                dailyQuestionsChannelId,
+                dailyDilemmaRoleId,
+                qotdRoleId,
+            } = await client.getServerConfigSchema();
+
+            const dailyDilemmasChannel = client.channels.cache.ensure(
+                dailyDilemmaChannelId,
+                throwDailyDilemmasChannelNotFoundError
+            ) as GuildTextBasedChannel;
 
             const dailyQuestionsChannel = client.channels.cache.ensure(
                 dailyQuestionsChannelId,
                 throwDailyQuestionsChannelNotFoundError
             ) as GuildTextBasedChannel;
 
-            const index = Math.floor(Math.random() * dailyQuestions.length);
+            const dailyDilemmaIndex = Math.floor(Math.random() * dailyDilemmas.length);
+            const dilemma = dailyDilemmas[dailyDilemmaIndex];
 
-            const question = dailyQuestions[index];
+            const dailyQuestionIndex = Math.floor(Math.random() * dailyQuestions.length);
+            const question = dailyQuestions[dailyQuestionIndex];
 
+            if (!dilemma) return client.logger.warn('No daily dilemma found.');
             if (!question) return client.logger.warn('No daily question found.');
 
-            const embed = new EmbedBuilder().setColor(client.config.color).setDescription(question).setTimestamp();
+            const dilemmaEmbed = new EmbedBuilder()
+                .setColor(client.config.color)
+                .setDescription(dilemma)
+                .setTimestamp();
 
-            const message = await dailyQuestionsChannel.send({ content: roleMention(qotdRoleId), embeds: [embed] });
-
+            const message = await dailyDilemmasChannel.send({ content: roleMention(dailyDilemmaRoleId), embeds: [dilemmaEmbed] })
+            
             await message.pin();
 
-            dailyQuestions.splice(index, 1);
+            const questionEmbed = new EmbedBuilder()
+                .setColor(client.config.color)
+                .setDescription(question)
+                .setTimestamp();
+
+            const message = await dailyQuestionsChannel.send({ content: roleMention(qotdRoleId), embeds: [questionEmbed] })
+                
+            await message.pin();
+
+            dailyQuestions.splice(dailyQuestionIndex, 1);
 
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
         });

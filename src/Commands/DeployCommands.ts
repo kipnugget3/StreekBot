@@ -1,8 +1,8 @@
 import { SlashCommand } from '../Structures';
 
 export default new SlashCommand()
-    .setName('reload-commands')
-    .setDescription('Reload application commands.')
+    .setName('deploy-commands')
+    .setDescription('Deploy application commands.')
     .setDMPermission(false)
     .setDefaultMemberPermissions(0n)
     .setCallback(async interaction => {
