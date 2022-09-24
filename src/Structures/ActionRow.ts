@@ -1,5 +1,12 @@
-import { ActionRowBuilder, type ModalActionRowComponentBuilder, type RestOrArray } from 'discord.js';
+import {
+    ActionRowBuilder,
+    type MessageActionRowComponentBuilder,
+    type ModalActionRowComponentBuilder,
+    type RestOrArray,
+} from 'discord.js';
 import type { ModalComponent } from './Modal';
+
+export class MessageActionRow extends ActionRowBuilder<MessageActionRowComponentBuilder> {}
 
 export class ModalActionRow extends ActionRowBuilder<ModalActionRowComponentBuilder> {
     declare readonly components: ModalComponent[];

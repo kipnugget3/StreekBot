@@ -1,12 +1,5 @@
-import {
-    ActionRowBuilder,
-    APIEmbedField,
-    ButtonBuilder,
-    ButtonStyle,
-    ComponentType,
-    EmbedBuilder,
-    Interaction,
-} from 'discord.js';
+import { APIEmbedField, ButtonStyle, ComponentType, EmbedBuilder, Interaction } from 'discord.js';
+import { Button, MessageActionRow } from '../Structures';
 
 export * from './Mongo';
 export * from './Symbols';
@@ -58,12 +51,12 @@ export async function embedPages(
 
     if (pages.length === 1) return interaction.editReply({ embeds: [embed] });
 
-    const first = new ButtonBuilder().setCustomId('first').setEmoji('⏪').setStyle(ButtonStyle.Primary);
-    const previous = new ButtonBuilder().setCustomId('previous').setEmoji('◀️').setStyle(ButtonStyle.Primary);
-    const next = new ButtonBuilder().setCustomId('next').setEmoji('▶️').setStyle(ButtonStyle.Primary);
-    const last = new ButtonBuilder().setCustomId('last').setEmoji('⏩').setStyle(ButtonStyle.Primary);
+    const first = new Button().setCustomId('first').setEmoji('⏪').setStyle(ButtonStyle.Primary);
+    const previous = new Button().setCustomId('previous').setEmoji('◀️').setStyle(ButtonStyle.Primary);
+    const next = new Button().setCustomId('next').setEmoji('▶️').setStyle(ButtonStyle.Primary);
+    const last = new Button().setCustomId('last').setEmoji('⏩').setStyle(ButtonStyle.Primary);
 
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(first, previous, next, last);
+    const row = new MessageActionRow().setComponents(first, previous, next, last);
 
     const message = await interaction.editReply({ embeds: [embed], components: [row] });
 

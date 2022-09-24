@@ -1,13 +1,5 @@
-import {
-    ActionRowBuilder,
-    APIEmbedField,
-    EmbedBuilder,
-    GuildTextBasedChannel,
-    inlineCode,
-    MessageActionRowComponentBuilder,
-    userMention,
-} from 'discord.js';
-import { SlashCommand } from '../Structures';
+import { type APIEmbedField, EmbedBuilder, type GuildTextBasedChannel, inlineCode, userMention } from 'discord.js';
+import { MessageActionRow, SlashCommand } from '../Structures';
 import { embedPages } from '../Util';
 
 export default new SlashCommand()
@@ -131,10 +123,7 @@ export default new SlashCommand()
                         const verifyButton = client.components.getButton('verify', true);
                         const helpButton = client.components.getButton('help', true);
 
-                        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                            verifyButton,
-                            helpButton
-                        );
+                        const row = new MessageActionRow().setComponents(verifyButton, helpButton);
 
                         await interaction.deleteReply();
 
