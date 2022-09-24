@@ -4,9 +4,10 @@ import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { ClientEvent } from '../Structures';
 import { throwDailyQuestionsChannelNotFoundError, throwDailyDilemmasChannelNotFoundError } from '../Errors';
 
-export default new ClientEvent({
-    name: Events.ClientReady,
-    run: async client => {
+export default new ClientEvent()
+    .setName(Events.ClientReady)
+    .setOnce(true)
+    .setCallback(async client => {
         const setClientActivity = () => client.user.setActivity('Het Streek', { type: ActivityType.Watching });
 
         setClientActivity();
@@ -56,22 +57,27 @@ export default new ClientEvent({
                 .setDescription(dilemma)
                 .setTimestamp();
 
-            const message = await dailyDilemmasChannel.send({ content: roleMention(dailyDilemmaRoleId), embeds: [dilemmaEmbed] })
-            
-            await message.pin();
+            const dilemmaMessage = await dailyDilemmasChannel.send({
+                content: roleMention(dailyDilemmaRoleId),
+                embeds: [dilemmaEmbed],
+            });
+
+            await dilemmaMessage.pin();
 
             const questionEmbed = new EmbedBuilder()
                 .setColor(client.config.color)
                 .setDescription(question)
                 .setTimestamp();
 
-            const message = await dailyQuestionsChannel.send({ content: roleMention(qotdRoleId), embeds: [questionEmbed] })
-                
-            await message.pin();
+            const qotdMessage = await dailyQuestionsChannel.send({
+                content: roleMention(qotdRoleId),
+                embeds: [questionEmbed],
+            });
+
+            await qotdMessage.pin();
 
             dailyQuestions.splice(dailyQuestionIndex, 1);
 
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
         });
-    },
-});
+    });

@@ -252,10 +252,10 @@ export class EventManager extends BaseManager<ClientEvent> {
     }
 
     register(structure: ClientEvent) {
-        const { name, run } = structure;
+        const key = structure.name;
 
-        if (!this.validator(structure)) throw new Error(this.validatorErrorMsg(name));
+        if (!this.validator(structure)) throw new Error(this.validatorErrorMsg(key));
 
-        this.client.on(name, run.bind(structure));
+        structure.listen(this.client);
     }
 }
