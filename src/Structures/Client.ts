@@ -70,7 +70,7 @@ export class Client extends BaseClient {
         this.database = this.mongoClient.db('Streekbot');
     }
 
-    build(): void {
+    build() {
         this.commands.registerAll();
         this.components.registerAll();
         this.autocompletes.registerAll();

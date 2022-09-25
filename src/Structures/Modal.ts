@@ -8,7 +8,6 @@ import {
 } from 'discord.js';
 import { ModalActionRow } from './ActionRow';
 import { ModalStructure } from './Structures';
-import type { TextInput } from './TextInput';
 import type { Structure } from './Types';
 
 export interface Modal extends Structure<ModalSubmitInteraction<'cached'>> {}
@@ -27,7 +26,7 @@ export class Modal extends ModalBuilder {
         throw new Error('setComponents() is not supported on Modal. Use setModalComponents() instead.');
     }
 
-    addModalComponents(...modalComponents: RestOrArray<ModalComponent>): this {
+    addModalComponents(...modalComponents: RestOrArray<ModalActionRowComponentBuilder>) {
         modalComponents = normalizeArray(modalComponents);
 
         if (this.components.length + modalComponents.length > 5)
@@ -36,7 +35,7 @@ export class Modal extends ModalBuilder {
         return super.addComponents(modalComponents.map(component => new ModalActionRow(component)));
     }
 
-    setModalComponents(...modalComponents: RestOrArray<ModalComponent>): this {
+    setModalComponents(...modalComponents: RestOrArray<ModalActionRowComponentBuilder>) {
         modalComponents = normalizeArray(modalComponents);
 
         if (modalComponents.length > 5) throw new Error('A Modal cannot have more than five components.');
@@ -44,9 +43,7 @@ export class Modal extends ModalBuilder {
         return super.setComponents(modalComponents.map(component => new ModalActionRow(component)));
     }
 
-    get modalComponents(): ModalComponent[] {
+    get modalComponents(): ModalActionRowComponentBuilder[] {
         return this.components.map(row => row.component);
     }
 }
-
-export type ModalComponent = TextInput;

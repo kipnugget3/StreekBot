@@ -4,13 +4,10 @@ import {
     type ModalActionRowComponentBuilder,
     type RestOrArray,
 } from 'discord.js';
-import type { ModalComponent } from './Modal';
 
 export class MessageActionRow extends ActionRowBuilder<MessageActionRowComponentBuilder> {}
 
 export class ModalActionRow extends ActionRowBuilder<ModalActionRowComponentBuilder> {
-    declare readonly components: ModalComponent[];
-
     constructor(component?: ModalActionRowComponentBuilder) {
         super(component ? { components: [component] } : {});
     }
@@ -25,15 +22,15 @@ export class ModalActionRow extends ActionRowBuilder<ModalActionRowComponentBuil
         throw new Error('setComponents() is not supported on ModalActionRow. Use setComponent() instead.');
     }
 
-    setComponent(component: ModalComponent): this {
+    setComponent(component: ModalActionRowComponentBuilder) {
         return super.setComponents(component);
     }
 
-    get component(): ModalComponent {
+    get component(): ModalActionRowComponentBuilder {
         if (this.components.length === 0) throw new Error('No component has been set on this ModalActionRow.');
 
         return this.components[0];
     }
 }
 
-export type ActionRow = ModalActionRow;
+export type ActionRow = MessageActionRow | ModalActionRow;

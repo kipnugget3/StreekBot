@@ -33,7 +33,10 @@ export default new ClientEvent().setName(Events.GuildMemberAdd).setCallback(asyn
 
     const title = `Welkom ${user.username}!`;
     const description =
-        'Welkom op de Het Streek Discord. Check de regels in <#985829312513052702>, start met kletsen in <#985824218476343306> en claim je rollen in <#985824313045291049>! Dit alles kan natuurlijk niet voor dat je geverifieërd bent, dat kan in <#984368582815273000>.';
+        'Welkom op de Het Streek Discord. ' +
+        'Check de regels in <#985829312513052702>, ' +
+        'start met kletsen in <#985824218476343306> en claim je rollen in <#985824313045291049>! ' +
+        'Dit alles kan natuurlijk niet voor dat je geverifieërd bent, dat kan in <#984368582815273000>.';
 
     const dmEmbed = new EmbedBuilder().setTitle(title).setDescription(description).setTimestamp();
 

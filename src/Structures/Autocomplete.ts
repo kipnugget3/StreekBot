@@ -6,9 +6,9 @@ export interface Autocomplete extends Structure<AutocompleteInteraction<'cached'
 
 @AutocompleteStructure
 export class Autocomplete {
-    declare name: string;
+    name!: string;
 
-    setName(name: string): this {
+    setName(name: string) {
         this.name = name;
 
         return this;
