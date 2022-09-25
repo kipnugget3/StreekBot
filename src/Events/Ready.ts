@@ -23,60 +23,57 @@ export default new ClientEvent()
         rule.minute = rule.second = 0;
 
         scheduleJob(rule, async () => {
-            const {
-                _id,
-                dailyDilemmas,
-                dailyQuestions,
-                dailyDilemmasChannelId: dailyDilemmaChannelId,
-                dailyQuestionsChannelId,
-                dailyDilemmaRoleId,
-                qotdRoleId,
-            } = await client.getServerConfigSchema();
+            const { _id, dailyDilemmas, dailyDilemmasChannelId, dailyDilemmasRoleId } =
+                await client.getServerConfigSchema();
 
             const dailyDilemmasChannel = client.channels.cache.ensure(
-                dailyDilemmaChannelId,
+                dailyDilemmasChannelId,
                 throwDailyDilemmasChannelNotFoundError
             ) as GuildTextBasedChannel;
+
+            const index = Math.floor(Math.random() * dailyDilemmas.length);
+            const dilemma = dailyDilemmas[index];
+
+            if (!dilemma) return client.logger.warn('No daily dilemma found.');
+
+            const embed = new EmbedBuilder().setColor(client.config.color).setDescription(dilemma).setTimestamp();
+
+            const message = await dailyDilemmasChannel.send({
+                content: roleMention(dailyDilemmasRoleId),
+                embeds: [embed],
+            });
+
+            await message.pin();
+
+            dailyDilemmas.splice(index, 1);
+
+            await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyDilemmas } });
+        });
+
+        scheduleJob(rule, async () => {
+            const { _id, dailyQuestions, dailyQuestionsChannelId, dailyQuestionsRoleId } =
+                await client.getServerConfigSchema();
 
             const dailyQuestionsChannel = client.channels.cache.ensure(
                 dailyQuestionsChannelId,
                 throwDailyQuestionsChannelNotFoundError
             ) as GuildTextBasedChannel;
 
-            const dailyDilemmaIndex = Math.floor(Math.random() * dailyDilemmas.length);
-            const dilemma = dailyDilemmas[dailyDilemmaIndex];
+            const index = Math.floor(Math.random() * dailyQuestions.length);
+            const question = dailyQuestions[index];
 
-            const dailyQuestionIndex = Math.floor(Math.random() * dailyQuestions.length);
-            const question = dailyQuestions[dailyQuestionIndex];
-
-            if (!dilemma) return client.logger.warn('No daily dilemma found.');
             if (!question) return client.logger.warn('No daily question found.');
 
-            const dilemmaEmbed = new EmbedBuilder()
-                .setColor(client.config.color)
-                .setDescription(dilemma)
-                .setTimestamp();
+            const embed = new EmbedBuilder().setColor(client.config.color).setDescription(question).setTimestamp();
 
-            const dilemmaMessage = await dailyDilemmasChannel.send({
-                content: roleMention(dailyDilemmaRoleId),
-                embeds: [dilemmaEmbed],
+            const message = await dailyQuestionsChannel.send({
+                content: roleMention(dailyQuestionsRoleId),
+                embeds: [embed],
             });
 
-            await dilemmaMessage.pin();
+            await message.pin();
 
-            const questionEmbed = new EmbedBuilder()
-                .setColor(client.config.color)
-                .setDescription(question)
-                .setTimestamp();
-
-            const qotdMessage = await dailyQuestionsChannel.send({
-                content: roleMention(qotdRoleId),
-                embeds: [questionEmbed],
-            });
-
-            await qotdMessage.pin();
-
-            dailyQuestions.splice(dailyQuestionIndex, 1);
+            dailyQuestions.splice(index, 1);
 
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
         });
