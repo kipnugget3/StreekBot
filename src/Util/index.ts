@@ -1,8 +1,21 @@
-import { APIEmbedField, ButtonStyle, ComponentType, EmbedBuilder, Interaction } from 'discord.js';
+import { APIEmbedField, ButtonStyle, ComponentType, EmbedBuilder, GuildMember, Interaction } from 'discord.js';
 import { Button, MessageActionRow } from '../Structures';
 
 export * from './Mongo';
 export * from './Symbols';
+
+interface FormatMessageData {
+    member: GuildMember;
+}
+
+export function formatMessage(message: string, data: FormatMessageData): string;
+export function formatMessage(message: string, { member }: FormatMessageData) {
+    return message
+        .replaceAll('{user}', member.user.toString())
+        .replaceAll('{username}', member.user.username)
+        .replaceAll('{server}', member.guild.name)
+        .replaceAll('{members}', member.guild.memberCount.toString());
+}
 
 export function forcePadding(num: number) {
     return `${num < 10 ? '0' : ''}${num}`;

@@ -1,6 +1,7 @@
 import { EmbedBuilder, Events, GuildTextBasedChannel } from 'discord.js';
 import { throwWelcomeChannelNotFoundError } from '../Errors';
 import { ClientEvent } from '../Structures';
+import { formatMessage } from '../Util';
 
 export default new ClientEvent().setName(Events.GuildMemberAdd).setCallback(async member => {
     const { client, guild, user } = member;
@@ -14,20 +15,14 @@ export default new ClientEvent().setName(Events.GuildMemberAdd).setCallback(asyn
 
     if (!welcomeChannel) return;
 
-    let welcomeMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+    const welcomeMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
     if (!welcomeMessage) return;
-
-    welcomeMessage = welcomeMessage
-        .replaceAll('{user}', member.toString())
-        .replaceAll('{username}', user.username)
-        .replaceAll('{server}', guild.name)
-        .replaceAll('{members}', guild.memberCount.toString());
 
     const channelEmbed = new EmbedBuilder()
         .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() })
         .setTitle(`Welkom ${user.username}!`)
-        .setDescription(welcomeMessage)
+        .setDescription(formatMessage(welcomeMessage, { member }))
         .setColor(client.config.color)
         .setTimestamp();
 
