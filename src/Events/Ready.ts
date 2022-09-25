@@ -27,7 +27,7 @@ export default new ClientEvent()
                 _id,
                 dailyDilemmas,
                 dailyQuestions,
-                dailyDilemmaChannelId,
+                dailyDilemmasChannelId: dailyDilemmaChannelId,
                 dailyQuestionsChannelId,
                 dailyDilemmaRoleId,
                 qotdRoleId,

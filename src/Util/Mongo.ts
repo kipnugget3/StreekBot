@@ -13,7 +13,7 @@ export interface ServerConfigSchema {
     verifiedRoleId: Snowflake;
     verificationSupportRoleId: Snowflake;
 
-    dailyDilemmaChannelId: Snowflake;
+    dailyDilemmasChannelId: Snowflake;
     dailyQuestionsChannelId: Snowflake;
     logChannelId: Snowflake;
     verifyLogsChannelId: Snowflake;
