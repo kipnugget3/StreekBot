@@ -55,12 +55,12 @@ export default new SlashCommand()
         await interaction.deferReply();
 
         const { client, options } = interaction;
+        const { config } = client;
 
         const group = options.getSubcommandGroup(true);
         const subcommand = options.getSubcommand(true);
 
         const { verifiedRoleId } = await client.getServerConfigSchema();
-
         const verifyUsers = await client.verificationCollection.find().toArray();
 
         switch (group) {
@@ -93,7 +93,12 @@ export default new SlashCommand()
 
                         await member.roles.add(verifiedRoleId);
 
-                        return interaction.editReply('Succesfully verified that user.');
+                        const embed = new EmbedBuilder()
+                            .setTitle('This user has been verified')
+                            .setDescription(member.user.username)
+                            .setColor(config.color);
+
+                        return interaction.editReply({ embeds: [embed] });
                     }
                     case 'remove': {
                         const user = options.getUser('user', true);
@@ -104,7 +109,12 @@ export default new SlashCommand()
 
                         if (member) await member.roles.remove(verifiedRoleId);
 
-                        return interaction.editReply('Succesfully unverified that user.');
+                        const embed = new EmbedBuilder()
+                            .setTitle('This user has been unverified')
+                            .setDescription(user.username)
+                            .setColor(config.color);
+
+                        return interaction.editReply({ embeds: [embed] });
                     }
                     default:
                         return;
