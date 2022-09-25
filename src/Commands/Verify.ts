@@ -85,6 +85,9 @@ export default new SlashCommand()
 
                         const member = await interaction.guild.members.fetch(user.id);
 
+                        if (verifyUsers.some(u => u.userId === user.id))
+                            await client.verificationCollection.deleteOne({ userId: user.id });
+
                         await client.verificationCollection.insertOne({
                             userId: user.id,
                             naam: name,
