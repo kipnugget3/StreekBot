@@ -1,3 +1,3 @@
-export const kCallback = Symbol('callback');
+export const callback = Symbol('callback');
 
-export const kStructureType = Symbol('structureType');
+export const structureType = Symbol('structureType');

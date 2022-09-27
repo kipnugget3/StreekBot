@@ -2,7 +2,7 @@ import { APIEmbedField, ButtonStyle, ComponentType, EmbedBuilder, GuildMember, I
 import { Button, MessageActionRow } from '../Structures';
 
 export * from './Mongo';
-export * from './Symbols';
+export { callback as kCallback, structureType as kStructureType } from './Symbols';
 
 interface FormatMessageData {
     member: GuildMember;

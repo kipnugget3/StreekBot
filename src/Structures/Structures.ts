@@ -69,8 +69,7 @@ export const AutocompleteStructure = BaseStructure(StructureType.Autocomplete);
 export const ModalStructure = BaseStructure(StructureType.Modal);
 
 function getStructureType(structure: AnyStructure): StructureType {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (structure as any)[kStructureType];
+    return structure[kStructureType];
 }
 
 function getType(structure: AnyCommandStructure): ApplicationCommandType;
@@ -84,9 +83,6 @@ function getType(structure: AnyStructure): number {
 }
 
 export class StructureUtil extends null {
-    static getStructureType = getStructureType;
-    static getType = getType;
-
     static isCommand(structure: AnyStructure): structure is AnyCommandStructure {
         return getStructureType(structure) === StructureType.Command;
     }
