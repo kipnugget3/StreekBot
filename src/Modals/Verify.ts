@@ -1,6 +1,7 @@
 import { EmbedBuilder, GuildTextBasedChannel, inlineCode, roleMention, TextInputStyle, userMention } from 'discord.js';
 import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
+import { compareStrings } from '../Util';
 
 export default new Modal()
     .setCustomId('verify')
@@ -70,7 +71,9 @@ export default new Modal()
             return interaction.editReply({ embeds: [interactionEmbed] });
         }
 
-        const verifyUserWithName = verifyUsers.find(user => user.naam.toLowerCase() === name.toLowerCase());
+        const verifyUserWithName = verifyUsers.find(user =>
+            compareStrings([user.naam.toLowerCase(), name.toLowerCase()], { ignoreCase: true })
+        );
 
         if (verifyUserWithName) {
             const logEmbed = new EmbedBuilder()

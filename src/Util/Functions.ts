@@ -1,6 +1,17 @@
 import { APIEmbedField, ButtonStyle, ComponentType, EmbedBuilder, GuildMember, Interaction } from 'discord.js';
 import { Button, MessageActionRow } from '../Structures';
 
+interface CompareStringsOptions {
+    ignoreCase?: boolean;
+}
+
+export function compareStrings(strings: string[], options?: CompareStringsOptions): boolean;
+export function compareStrings(strings: string[], { ignoreCase = false }: CompareStringsOptions = {}): boolean {
+    const [first, ...rest] = strings;
+
+    return rest.every(str => (ignoreCase ? str.toLowerCase() === first.toLowerCase() : str === first));
+}
+
 interface FormatMessageData {
     member: GuildMember;
 }
@@ -18,8 +29,10 @@ export function forcePadding(num: number) {
     return `${num < 10 ? '0' : ''}${num}`;
 }
 
-export function formatDate(format: string, timestamp = Date.now()) {
-    const date = new Date(timestamp);
+export function formatDate(format: string, date?: Date): string;
+export function formatDate(format: string, timestamp?: number): string;
+export function formatDate(format: string, dateOrTimestamp: Date | number = Date.now()) {
+    const date = new Date(dateOrTimestamp);
 
     const years = date.getFullYear().toString();
     const months = forcePadding(date.getMonth() + 1);
@@ -38,11 +51,21 @@ export function formatDate(format: string, timestamp = Date.now()) {
         .replaceAll('ss', seconds);
 }
 
+interface EmbedPagesOptions {
+    perPage?: number;
+}
+
 export async function embedPages(
     interaction: Interaction<'cached'>,
     embed: EmbedBuilder,
     fields: APIEmbedField[],
-    perPage = 5
+    options?: EmbedPagesOptions
+): Promise<void>;
+export async function embedPages(
+    interaction: Interaction<'cached'>,
+    embed: EmbedBuilder,
+    fields: APIEmbedField[],
+    { perPage = 5 }: EmbedPagesOptions = {}
 ) {
     if (!interaction.isRepliable()) throw new Error('Interaction is not repliable.');
 
@@ -59,7 +82,7 @@ export async function embedPages(
 
     embed.setFields(pages[page]).setFooter({ text: `Page ${page + 1} of ${pages.length}` });
 
-    if (pages.length === 1) return interaction.editReply({ embeds: [embed] });
+    if (pages.length === 1) return void (await interaction.editReply({ embeds: [embed] }));
 
     const first = new Button().setCustomId('first').setEmoji('⏪').setStyle(ButtonStyle.Primary);
     const previous = new Button().setCustomId('previous').setEmoji('◀️').setStyle(ButtonStyle.Primary);
