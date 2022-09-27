@@ -67,16 +67,31 @@ export default new SlashCommand()
             case 'users': {
                 switch (subcommand) {
                     case 'list': {
-                        const fields: APIEmbedField[] = verifyUsers.map(user => ({
-                            name: user.naam,
-                            value:
-                                `User: ${userMention(user.userId)}\n` +
-                                `Leerlingnummer: ${inlineCode(user.leerlingnummer)}`,
-                        }));
+                        const members = (await interaction.guild.members.fetch()).toJSON();
+                        const fields: APIEmbedField[] = [];
+
+                        for (const member of members) {
+                            const verifyUser = await client.verificationCollection.findOne({
+                                userId: member.id,
+                            });
+
+                            const name = verifyUser?.naam ? `${verifyUser.naam} ✅` : `${member.user.username} ❌`;
+                            const mention = userMention(verifyUser?.userId ?? member.id);
+                            const studentNumber = inlineCode(verifyUser?.leerlingnummer ?? '-');
+
+                            fields.push({
+                                name,
+                                value: `User: ${mention}\nLeerlingnummer: ${studentNumber}`,
+                            });
+                        }
 
                         const embed = new EmbedBuilder().setTitle('Verified users').setTimestamp();
 
-                        return embedPages(interaction, embed, fields);
+                        return embedPages(
+                            interaction,
+                            embed,
+                            fields.sort((a, b) => Number(b.name.endsWith('✅')) - Number(a.name.endsWith('✅')))
+                        );
                     }
                     case 'add': {
                         const user = options.getUser('user', true);
