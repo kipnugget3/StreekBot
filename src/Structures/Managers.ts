@@ -6,14 +6,23 @@ import type { ClientEvent } from './ClientEvent';
 import type { ContextMenu, MessageContextMenu, UserContextMenu } from './ContextMenu';
 import type { SelectMenu } from './SelectMenu';
 import type { SlashCommand } from './SlashCommand';
-import { StructureUtil } from './Structures';
-import type {
-    AnyAutocompleteStructure,
-    AnyCommandStructure,
-    AnyComponentStructure,
-    AnyModalStructure,
-    AnyStructure,
-} from './Types';
+import {
+    type AnyStructure,
+    type AnyCommandStructure,
+    type AnyComponentStructure,
+    type AnyAutocompleteStructure,
+    type AnyModalStructure,
+    isAutocomplete,
+    isButton,
+    isCommand,
+    isComponent,
+    isContextMenu,
+    isMessageContextMenu,
+    isModal,
+    isSelectMenu,
+    isSlashCommand,
+    isUserContextMenu,
+} from '../Util';
 
 interface BaseManagerData<T> {
     path: string;
@@ -95,7 +104,7 @@ export class CommandManager extends CachedManager<AnyCommandStructure> {
     constructor(client: Client) {
         super(client, {
             path: join(__dirname, '..', 'Commands'),
-            validator: StructureUtil.isCommand,
+            validator: isCommand,
             validatorErrorMsg: key => `Structure "${key}" is not a command.`,
         });
     }
@@ -127,7 +136,7 @@ export class CommandManager extends CachedManager<AnyCommandStructure> {
         return this._get({
             key,
             required,
-            validator: StructureUtil.isSlashCommand,
+            validator: isSlashCommand,
             validatorErrorMsg: key => `Command "${key}" is not a slash command.`,
         });
     }
@@ -138,7 +147,7 @@ export class CommandManager extends CachedManager<AnyCommandStructure> {
         return this._get({
             key,
             required,
-            validator: StructureUtil.isContextMenu,
+            validator: isContextMenu,
             validatorErrorMsg: key => `Command "${key}" is not a context menu.`,
         });
     }
@@ -149,7 +158,7 @@ export class CommandManager extends CachedManager<AnyCommandStructure> {
         return this._get({
             key,
             required,
-            validator: StructureUtil.isUserContextMenu,
+            validator: isUserContextMenu,
             validatorErrorMsg: key => `Command "${key}" is not a user context menu.`,
         });
     }
@@ -160,7 +169,7 @@ export class CommandManager extends CachedManager<AnyCommandStructure> {
         return this._get({
             key,
             required,
-            validator: StructureUtil.isMessageContextMenu,
+            validator: isMessageContextMenu,
             validatorErrorMsg: key => `Command "${key}" is not a message context menu.`,
         });
     }
@@ -170,7 +179,7 @@ export class ComponentManager extends CachedManager<AnyComponentStructure> {
     constructor(client: Client) {
         super(client, {
             path: join(__dirname, '..', 'Components'),
-            validator: StructureUtil.isComponent,
+            validator: isComponent,
             validatorErrorMsg: key => `Structure "${key}" is not a component.`,
         });
     }
@@ -189,7 +198,7 @@ export class ComponentManager extends CachedManager<AnyComponentStructure> {
         return this._get({
             key,
             required,
-            validator: StructureUtil.isButton,
+            validator: isButton,
             validatorErrorMsg: key => `Component "${key}" is not an interaction button.`,
         });
     }
@@ -200,7 +209,7 @@ export class ComponentManager extends CachedManager<AnyComponentStructure> {
         return this._get({
             key,
             required,
-            validator: StructureUtil.isSelectMenu,
+            validator: isSelectMenu,
             validatorErrorMsg: key => `Component "${key}" is not a select menu.`,
         });
     }
@@ -210,7 +219,7 @@ export class AutocompleteManager extends CachedManager<AnyAutocompleteStructure>
     constructor(client: Client) {
         super(client, {
             path: join(__dirname, '..', 'Autocompletes'),
-            validator: StructureUtil.isAutocomplete,
+            validator: isAutocomplete,
             validatorErrorMsg: key => `Structure "${key}" is not an autocomplete.`,
         });
     }
@@ -228,7 +237,7 @@ export class ModalManager extends CachedManager<AnyModalStructure> {
     constructor(client: Client) {
         super(client, {
             path: join(__dirname, '..', 'Modals'),
-            validator: StructureUtil.isModal,
+            validator: isModal,
             validatorErrorMsg: key => `Structure "${key}" is not a modal.`,
         });
     }

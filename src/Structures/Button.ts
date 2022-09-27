@@ -9,8 +9,7 @@ import {
     ButtonComponentData,
     APIButtonComponent,
 } from 'discord.js';
-import { ComponentStructure } from './Structures';
-import type { Structure } from './Types';
+import { type Structure, ComponentStructure } from '../Util';
 
 export interface Button extends Structure<ButtonInteraction<'cached'>> {}
 

@@ -1,6 +1,5 @@
 import { SelectMenuBuilder, type SelectMenuInteraction } from 'discord.js';
-import { ComponentStructure } from './Structures';
-import type { Structure } from './Types';
+import { type Structure, ComponentStructure } from '../Util';
 
 export interface SelectMenu extends Structure<SelectMenuInteraction<'cached'>> {}
 

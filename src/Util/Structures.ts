@@ -1,8 +1,5 @@
 import { ApplicationCommandType, Awaitable, ComponentType, Interaction, isJSONEncodable } from 'discord.js';
-import type { Button } from './Button';
-import type { ContextMenu, MessageContextMenu, UserContextMenu } from './ContextMenu';
-import type { SelectMenu } from './SelectMenu';
-import type { SlashCommand } from './SlashCommand';
+import { callback as kCallback, structureType as kStructureType } from './Symbols';
 import type {
     AnyAutocompleteStructure,
     AnyCommandStructure,
@@ -11,7 +8,7 @@ import type {
     AnyStructure,
     Callback,
 } from './Types';
-import { kCallback, kStructureType } from '../Util';
+import type { Button, ContextMenu, MessageContextMenu, SelectMenu, SlashCommand, UserContextMenu } from '../Structures';
 
 export enum StructureType {
     Command = 'Command',
@@ -68,13 +65,13 @@ export const ComponentStructure = BaseStructure(StructureType.Component);
 export const AutocompleteStructure = BaseStructure(StructureType.Autocomplete);
 export const ModalStructure = BaseStructure(StructureType.Modal);
 
-function getStructureType(structure: AnyStructure): StructureType {
+export function getStructureType(structure: AnyStructure): StructureType {
     return structure[kStructureType];
 }
 
-function getType(structure: AnyCommandStructure): ApplicationCommandType;
-function getType(structure: AnyComponentStructure): ComponentType;
-function getType(structure: AnyStructure): number {
+export function getType(structure: AnyCommandStructure): ApplicationCommandType;
+export function getType(structure: AnyComponentStructure): ComponentType;
+export function getType(structure: AnyStructure): number {
     if (!isJSONEncodable(structure) || typeof structure.toJSON !== 'function') return -1;
 
     const json = structure.toJSON();
@@ -82,51 +79,45 @@ function getType(structure: AnyStructure): number {
     return 'type' in json && typeof json.type === 'number' ? json.type : -1;
 }
 
-export class StructureUtil extends null {
-    static isCommand(structure: AnyStructure): structure is AnyCommandStructure {
-        return getStructureType(structure) === StructureType.Command;
-    }
+export function isCommand(structure: AnyStructure): structure is AnyCommandStructure {
+    return getStructureType(structure) === StructureType.Command;
+}
 
-    static isSlashCommand(structure: AnyStructure): structure is SlashCommand {
-        return StructureUtil.isCommand(structure) && getType(structure) === ApplicationCommandType.ChatInput;
-    }
+export function isSlashCommand(structure: AnyStructure): structure is SlashCommand {
+    return isCommand(structure) && getType(structure) === ApplicationCommandType.ChatInput;
+}
 
-    static isContextMenu(structure: AnyStructure): structure is ContextMenu {
-        return (
-            StructureUtil.isCommand(structure) &&
-            [ApplicationCommandType.User, ApplicationCommandType.Message].includes(getType(structure))
-        );
-    }
+export function isContextMenu(structure: AnyStructure): structure is ContextMenu {
+    return (
+        isCommand(structure) &&
+        [ApplicationCommandType.User, ApplicationCommandType.Message].includes(getType(structure))
+    );
+}
 
-    static isUserContextMenu(structure: AnyStructure): structure is UserContextMenu {
-        return StructureUtil.isCommand(structure) && getType(structure) === ApplicationCommandType.User;
-    }
+export function isUserContextMenu(structure: AnyStructure): structure is UserContextMenu {
+    return isCommand(structure) && getType(structure) === ApplicationCommandType.User;
+}
 
-    static isMessageContextMenu(structure: AnyStructure): structure is MessageContextMenu {
-        return StructureUtil.isCommand(structure) && getType(structure) === ApplicationCommandType.Message;
-    }
+export function isMessageContextMenu(structure: AnyStructure): structure is MessageContextMenu {
+    return isCommand(structure) && getType(structure) === ApplicationCommandType.Message;
+}
 
-    static isComponent(structure: AnyStructure): structure is AnyComponentStructure {
-        return getStructureType(structure) === StructureType.Component;
-    }
+export function isComponent(structure: AnyStructure): structure is AnyComponentStructure {
+    return getStructureType(structure) === StructureType.Component;
+}
 
-    static isButton(structure: AnyStructure): structure is Button {
-        return (
-            StructureUtil.isComponent(structure) &&
-            getType(structure) === ComponentType.Button &&
-            'custom_id' in structure.data
-        );
-    }
+export function isButton(structure: AnyStructure): structure is Button {
+    return isComponent(structure) && getType(structure) === ComponentType.Button && 'custom_id' in structure.data;
+}
 
-    static isSelectMenu(structure: AnyStructure): structure is SelectMenu {
-        return StructureUtil.isComponent(structure) && getType(structure) === ComponentType.SelectMenu;
-    }
+export function isSelectMenu(structure: AnyStructure): structure is SelectMenu {
+    return isComponent(structure) && getType(structure) === ComponentType.SelectMenu;
+}
 
-    static isAutocomplete(structure: AnyStructure): structure is AnyAutocompleteStructure {
-        return getStructureType(structure) === StructureType.Autocomplete;
-    }
+export function isAutocomplete(structure: AnyStructure): structure is AnyAutocompleteStructure {
+    return getStructureType(structure) === StructureType.Autocomplete;
+}
 
-    static isModal(structure: AnyStructure): structure is AnyModalStructure {
-        return getStructureType(structure) === StructureType.Modal;
-    }
+export function isModal(structure: AnyStructure): structure is AnyModalStructure {
+    return getStructureType(structure) === StructureType.Modal;
 }

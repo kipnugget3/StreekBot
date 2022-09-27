@@ -4,8 +4,7 @@ import {
     type RESTPostAPIApplicationCommandsJSONBody,
     SlashCommandBuilder,
 } from 'discord.js';
-import { CommandStructure } from './Structures';
-import type { Structure } from './Types';
+import { CommandStructure, type Structure } from '../Util';
 
 declare module 'discord.js' {
     interface SlashCommandSubcommandsOnlyBuilder extends Structure<ChatInputCommandInteraction<'cached'>> {}

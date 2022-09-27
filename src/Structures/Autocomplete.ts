@@ -1,6 +1,5 @@
 import type { AutocompleteInteraction } from 'discord.js';
-import { AutocompleteStructure } from './Structures';
-import type { Structure } from './Types';
+import { type Structure, AutocompleteStructure } from '../Util';
 
 export interface Autocomplete extends Structure<AutocompleteInteraction<'cached'>> {}
 

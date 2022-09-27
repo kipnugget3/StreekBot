@@ -9,6 +9,4 @@ export * from './Managers';
 export * from './Modal';
 export * from './SelectMenu';
 export * from './SlashCommand';
-export * from './Structures';
 export * from './TextInput';
-export * from './Types';

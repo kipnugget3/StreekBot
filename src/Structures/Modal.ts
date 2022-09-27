@@ -7,8 +7,7 @@ import {
     ModalActionRowComponentBuilder,
 } from 'discord.js';
 import { ModalActionRow } from './ActionRow';
-import { ModalStructure } from './Structures';
-import type { Structure } from './Types';
+import { type Structure, ModalStructure } from '../Util';
 
 export interface Modal extends Structure<ModalSubmitInteraction<'cached'>> {}
 

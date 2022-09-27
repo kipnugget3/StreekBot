@@ -6,8 +6,7 @@ import {
     type MessageContextMenuCommandInteraction,
     type UserContextMenuCommandInteraction,
 } from 'discord.js';
-import { CommandStructure } from './Structures';
-import type { Structure } from './Types';
+import { type Structure, CommandStructure } from '../Util';
 
 interface BaseContextMenu<T extends ContextMenuCommandInteraction<'cached'>> extends Structure<T> {}
 
