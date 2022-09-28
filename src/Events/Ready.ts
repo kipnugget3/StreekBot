@@ -77,4 +77,23 @@ export default new ClientEvent()
 
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
         });
+
+        const { io } = require("socket.io-client");
+        const socket = io("http://localhost:3003");
+        socket.on("connect", () => {
+            console.log("Websocket connected.");
+        });
+
+        socket.on("verify", (data: any) => {
+            const guild = client.guilds.cache.get("927613222452858900");
+            const member = guild?.members.cache.get(data);
+            const role = guild?.roles.cache.get("1024697531936034897");
+            member?.send("Email verificatie successvol!");
+            // @ts-ignore
+            member?.roles.add(role);
+        });
+
+        socket.on("disconnect", () => {
+            console.warn("Websocket disconnected.");
+        });
     });
