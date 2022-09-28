@@ -158,6 +158,11 @@ export default new Modal()
             };
         };
 
-        transporter.sendMail(await mailOptions(studentNumber, name, user.id).catch(() => null),
+        transporter.sendMail(await mailOptions(studentNumber, name, user.id), function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
         });
     });
