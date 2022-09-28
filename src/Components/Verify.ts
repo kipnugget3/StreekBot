@@ -91,7 +91,7 @@ export default new Button()
             };
 
             transporter.sendMail(
-                await mailOptions(verifyUser.leerlingnummer, verifyUser.naam, verifyUser.userId).catch(() => null),
+                await mailOptions(verifyUser.leerlingnummer, verifyUser.naam, verifyUser.userId),
             );
             return;
         }

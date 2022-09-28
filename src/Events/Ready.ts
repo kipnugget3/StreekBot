@@ -87,7 +87,7 @@ export default new ClientEvent()
         socket.on('verify', (data: string) => {
             const guild = client.guilds.cache.get('927613222452858900');
             const member = guild?.members.cache.get(data);
-            const role = guild?.roles.cache.get('1024697531936034897');
+            const role = guild?.roles.cache.get('1021436271157051493');
             member?.send('Email verificatie successvol!');
             if (role) member?.roles.add(role);
         });
