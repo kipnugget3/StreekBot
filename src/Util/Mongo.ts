@@ -2,7 +2,6 @@ import type { Snowflake } from 'discord.js';
 
 export interface VerifySchema {
     userId: string;
-    naam: string;
     leerlingnummer: string;
 }
 

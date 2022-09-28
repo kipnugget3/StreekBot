@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { Collection, Routes, type Client } from 'discord.js';

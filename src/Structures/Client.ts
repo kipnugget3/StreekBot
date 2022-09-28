@@ -9,17 +9,25 @@ declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace NodeJS {
         interface ProcessEnv {
+            GUILD_ID: string;
             DISCORD_TOKEN: string;
             MONGO_URI: string;
             WEBHOOK_URL: string;
+            VERIFY_EMAIL: string;
+            VERIFY_PASSWORD: string;
+            ENCRYPTION_KEY: string;
         }
     }
 }
 
 interface ClientConfig {
+    guildId: string;
     token: string;
     mongoUri: string;
     webhookURL: string;
+    verifyEmail: string;
+    verifyPassword: string;
+    encryptionKey: string;
     color: number;
 }
 
@@ -58,9 +66,13 @@ export class Client extends BaseClient {
         this.events = new EventManager(this);
 
         this.config = {
+            guildId: env.GUILD_ID,
             token: env.DISCORD_TOKEN,
             mongoUri: env.MONGO_URI,
             webhookURL: env.WEBHOOK_URL,
+            verifyEmail: env.VERIFY_EMAIL,
+            verifyPassword: env.VERIFY_PASSWORD,
+            encryptionKey: env.ENCRYPTION_KEY,
             color: 0x5d2f88,
         };
 

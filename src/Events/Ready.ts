@@ -1,6 +1,7 @@
 import { setInterval } from 'node:timers';
 import { ActivityType, EmbedBuilder, Events, GuildTextBasedChannel, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
+import { io } from 'socket.io-client';
 import { ClientEvent } from '../Structures';
 import { throwDailyQuestionsChannelNotFoundError, throwDailyDilemmasChannelNotFoundError } from '../Errors';
 
@@ -78,21 +79,20 @@ export default new ClientEvent()
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
         });
 
-        const { io } = require('socket.io-client');
         const socket = io('http://localhost:3003');
-        socket.on('connect', () => {
-            console.log('Websocket connected.');
+
+        socket.on('connect', () => client.logger.info('Websocket connected.'));
+
+        socket.on('verify', async (data: string) => {
+            const { verifiedRoleId } = await client.getServerConfigSchema();
+
+            const guild = await client.guilds.fetch(client.config.guildId);
+            const member = await guild.members.fetch(data);
+
+            await member.send('Email verificatie successvol!');
+
+            await member.roles.add(verifiedRoleId);
         });
 
-        socket.on('verify', (data: string) => {
-            const guild = client.guilds.cache.get('927613222452858900');
-            const member = guild?.members.cache.get(data);
-            const role = guild?.roles.cache.get('1021436271157051493');
-            member?.send('Email verificatie successvol!');
-            if (role) member?.roles.add(role);
-        });
-
-        socket.on('disconnect', () => {
-            console.warn('Websocket disconnected.');
-        });
+        socket.on('disconnect', () => client.logger.warn('Websocket disconnected.'));
     });

@@ -1,3 +1,4 @@
+export * from './Email';
 export * from './Functions';
 export * from './Mongo';
 export * from './Structures';

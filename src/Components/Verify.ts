@@ -90,9 +90,7 @@ export default new Button()
                 };
             };
 
-            transporter.sendMail(
-                await mailOptions(verifyUser.leerlingnummer, verifyUser.naam, verifyUser.userId),
-            );
+            transporter.sendMail(await mailOptions(verifyUser.leerlingnummer, verifyUser.naam, verifyUser.userId));
             return;
         }
 

@@ -19,10 +19,12 @@ export default new SlashCommand()
         const userCount = client.users.cache.size.toString();
         const guildCount = client.guilds.cache.size.toString();
 
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const djsVersion = require('../../package.json').dependencies['discord.js'];
         const nodeVersion = process.version;
 
         const cpu = os.cpus()[0].model;
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { version } = require('../../package.json');
 
         const { platform } = process;
