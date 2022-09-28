@@ -2,11 +2,11 @@ import { EmbedBuilder, GuildTextBasedChannel, roleMention, TextInputStyle, userM
 import nodemailer from 'nodemailer';
 import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
-import { mailOptions } from '../Util';
+import { encrypt, createMailOptions } from '../Util';
 
 export default new Modal()
     .setCustomId('verify')
-    .setTitle('Verify jezelf.')
+    .setTitle('Verifieer jezelf.')
     .addModalComponents(
         new TextInput()
             .setCustomId('student_number')
@@ -80,15 +80,29 @@ export default new Modal()
 
         await verifyLogsChannel.send({ embeds: [logEmbed] });
 
+        const { encryptionKey, verifyEmail, verifyPassword } = client.config;
+
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: client.config.verifyEmail,
-                pass: client.config.verifyPassword,
+                user: verifyEmail,
+                pass: verifyPassword,
             },
         });
 
-        const options = mailOptions(studentNumber, user.id, client.config.encryptionKey);
+        const encrypted = encrypt(user.id, encryptionKey);
+
+        const text = `Hey leerling,
+
+        We heten je van harte welkom op de (onofficiële) Het Streek Discord server. Om te voorkomen dat mensen in de server gaan zonder zichzelf te verifiëren, moet je eventjes op de link hieronder klikken om toegang tot alle kanalen te krijgen. Je hoeft niks te doen, je wordt automatisch geverifieerd.
+        https://hetstreek.net/auth?content=${encrypted.content}&iv=${encrypted.iv}
+        
+        Let op! Als je deze link niet zelf hebt aangevraagd, verwijder deze email.
+        
+        Groetjes,
+        Het Streek Discord team.`;
+
+        const options = createMailOptions({ leerlingnummer: studentNumber, text });
 
         const res = await transporter.sendMail(options);
 

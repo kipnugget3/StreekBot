@@ -1,11 +1,9 @@
-import crypto from 'crypto';
 import { setTimeout } from 'node:timers';
-import process from 'node:process';
-import { Buffer } from 'node:buffer';
 import { ButtonStyle, GuildTextBasedChannel, Snowflake } from 'discord.js';
 import nodemailer from 'nodemailer';
 import { Button } from '../Structures';
 import { throwVerifyLogsChannelNotFoundError } from '../Errors';
+import { encrypt, createMailOptions } from '../Util';
 
 const cooldowns = new Map<Snowflake, number>();
 
@@ -56,42 +54,33 @@ export default new Button()
                 ephemeral: true,
             });
 
-            const algorithm = 'aes-256-ctr';
-            const secretKey = `${process.env.KEY}`;
+            const { encryptionKey, verifyEmail, verifyPassword } = client.config;
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: process.env.VERIFY_EMAIL,
-                    pass: process.env.VERIFY_PASSWORD,
+                    user: verifyEmail,
+                    pass: verifyPassword,
                 },
             });
 
             verifyLogsChannel.send(`${interaction.user} heeft de email nog een keer ontvangen.`);
 
-            const encrypt = (text: string) => {
-                const iv = crypto.randomBytes(16);
-                const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-                const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+            const encrypted = encrypt(user.id, encryptionKey);
 
-                return {
-                    iv: iv.toString('hex'),
-                    content: encrypted.toString('hex'),
-                };
-            };
+            const text = `Hey leerling,
+            
+            We heten je van harte welkom op de (onofficiële) Het Streek Discord server. Om te voorkomen dat mensen in de server gaan zonder zichzelf te verifiëren, moet je eventjes op de link hieronder klikken om toegang tot alle kanalen te krijgen. Je hoeft niks te doen, je wordt automatisch geverifieerd.
+            https://hetstreek.net/auth?content=${encrypted.content}&iv=${encrypted.iv}
+            
+            Let op! Als je deze link niet zelf hebt aangevraagd, verwijder deze email.
+            
+            Dit is niet de eerste keer dat we deze email sturen, als je hulp nodig hebt, klik op de "Hulp Nodig?" knop.
+            
+            Groetjes,
+            Het Streek Discord team.`;
 
-            const mailOptions = async (llnr: string, naam: string, userId: string) => {
-                const encrypted = encrypt(userId);
-                return {
-                    from: 'verify.hetstreek@gmail.com',
-                    to: `${llnr}@hetstreek.nl`,
-                    subject: 'Voltooi je verificatie',
-                    text: `Hey ${naam},\n\nWe heten je van harte welkom op de (onofficiële) Het Streek Discord server. Om te voorkomen dat mensen in de server gaan zonder met hun echte naam te verifiëren, moet je eventjes op de link hieronder klikken om toegang tot alle kanalen te krijgen. Je hoeft niks te doen, je wordt automatisch geverifieerd.\nhttps://hetstreek.net/auth?content=${encrypted.content}&iv=${encrypted.iv}\n\nLet op! Als je deze link niet zelf hebt aangevraagd, verwijder deze email.\n\nDit is niet de eerste keer dat we deze email sturen, als je hulp nodig hebt, klik op de "Hulp Nodig?" knop.\n\nGroetjes,\nHet Streek Discord team.`,
-                };
-            };
-
-            transporter.sendMail(await mailOptions(verifyUser.leerlingnummer, verifyUser.naam, verifyUser.userId));
-            return;
+            return transporter.sendMail(createMailOptions({ leerlingnummer: verifyUser.leerlingnummer, text }));
         }
 
         const modal = client.modals.get('verify', true);

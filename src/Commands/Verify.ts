@@ -20,9 +20,6 @@ export default new SlashCommand()
                         option.setName('user').setDescription('The user to verify.').setRequired(true)
                     )
                     .addStringOption(option =>
-                        option.setName('name').setDescription('The name of the user.').setRequired(true)
-                    )
-                    .addStringOption(option =>
                         option
                             .setName('student-number')
                             .setDescription('The student number of the user.')
@@ -75,13 +72,12 @@ export default new SlashCommand()
                                 userId: member.id,
                             });
 
-                            const name = verifyUser?.naam ? `${verifyUser.naam} ✅` : `${member.user.username} ❌`;
                             const mention = userMention(verifyUser?.userId ?? member.id);
                             const studentNumber = inlineCode(verifyUser?.leerlingnummer ?? '-');
 
                             fields.push({
-                                name,
-                                value: `User: ${mention}\nLeerlingnummer: ${studentNumber}`,
+                                name: `${studentNumber} ${verifyUser ? '✅' : '❌'}`,
+                                value: `User: ${mention}`,
                             });
                         }
 
@@ -95,7 +91,6 @@ export default new SlashCommand()
                     }
                     case 'add': {
                         const user = options.getUser('user', true);
-                        const name = options.getString('name', true);
                         const studentNumber = options.getString('student-number', true);
 
                         const member = await interaction.guild.members.fetch(user.id);
@@ -105,7 +100,6 @@ export default new SlashCommand()
 
                         await client.verificationCollection.insertOne({
                             userId: user.id,
-                            naam: name,
                             leerlingnummer: studentNumber,
                         });
 
