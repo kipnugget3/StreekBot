@@ -1,9 +1,11 @@
+import crypto from 'crypto';
+import process from 'node:process';
+import { Buffer } from 'node:buffer';
 import { EmbedBuilder, GuildTextBasedChannel, inlineCode, roleMention, TextInputStyle, userMention } from 'discord.js';
+import nodemailer from 'nodemailer';
 import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
 import { compareStrings } from '../Util';
-import nodemailer from 'nodemailer';
-import crypto from 'crypto';
 
 export default new Modal()
     .setCustomId('verify')
@@ -13,7 +15,7 @@ export default new Modal()
             .setCustomId('student_number')
             .setLabel('Leerlingnummer - Voor email verificatie')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder("Let op: dit nummer wordt ook gebruikt voor email verificatie.")
+            .setPlaceholder('Let op: dit nummer wordt ook gebruikt voor email verificatie.')
             .setMinLength(5)
             .setMaxLength(5),
         new TextInput()
@@ -22,7 +24,7 @@ export default new Modal()
             .setStyle(TextInputStyle.Paragraph)
             .setMinLength(1)
             .setMaxLength(300)
-            .setRequired(true),
+            .setRequired(true)
     )
     .setCallback(async interaction => {
         await interaction.deferReply({ ephemeral: true });
@@ -104,7 +106,9 @@ export default new Modal()
             leerlingnummer: studentNumber,
         });
 
-        await interaction.editReply(`Verificatie 50% voltooid. Om te voltooien, kijk in je schoolmail en volg de instructies: \`${studentNumber}@hetstreek.nl\`.`);
+        await interaction.editReply(
+            `Verificatie 50% voltooid. Om te voltooien, kijk in je schoolmail en volg de instructies: \`${studentNumber}@hetstreek.nl\`.`
+        );
 
         const logEmbed = new EmbedBuilder()
             .setDescription(`${user} heeft een email gekregen!`)
@@ -112,7 +116,6 @@ export default new Modal()
             .setColor(client.config.color);
 
         await verifyLogsChannel.send({ embeds: [logEmbed] });
-
 
         // Sending the email to the user.
         const algorithm = 'aes-256-ctr';
@@ -133,11 +136,11 @@ export default new Modal()
 
             return {
                 iv: iv.toString('hex'),
-                content: encrypted.toString('hex')
+                content: encrypted.toString('hex'),
             };
         };
 
-        const mailOptions = async (llnr: any, naam: string, userId: string) => {
+        const mailOptions = async (llnr: string, naam: string, userId: string) => {
             const encrypted = encrypt(userId);
             return {
                 from: 'verify.hetstreek@gmail.com',
@@ -152,14 +155,9 @@ export default new Modal()
                 
                 Groetjes,
                 Het Streek Discord team.`,
-            }
+            };
         };
 
-        transporter.sendMail(await mailOptions(studentNumber, name, user.id), function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
+        transporter.sendMail(await mailOptions(studentNumber, name, user.id).catch(() => null),
         });
     });
