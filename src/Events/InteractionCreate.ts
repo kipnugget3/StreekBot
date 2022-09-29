@@ -10,7 +10,7 @@ export default new ClientEvent().setName(Events.InteractionCreate).setCallback(a
         if (['help', 'verify'].includes(interaction.customId)) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
-            return interaction.components.getButton(interaction.customId)?.run(interaction);
+            return interaction.client.components.getButton(interaction.customId)?.run(interaction);
         }
         return;
     }
