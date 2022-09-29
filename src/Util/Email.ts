@@ -16,16 +16,19 @@ export function encrypt(text: string, encryptionKey: string) {
 }
 
 interface CreateMailOptionsData {
-    leerlingnummer: string;
+    email: string;
     text: string;
 }
 
 export function createMailOptions(data: CreateMailOptionsData): SendMailOptions;
-export function createMailOptions({ leerlingnummer, text }: CreateMailOptionsData) {
+export function createMailOptions({ email, text }: CreateMailOptionsData) {
     return {
         from: 'verify.hetstreek@gmail.com',
-        to: `${leerlingnummer}@hetstreek.nl`,
+        to: email,
         subject: 'Voltooi je verificatie',
-        text,
+        text: text
+            .split('\n')
+            .map(line => line.trim())
+            .join('\n'),
     };
 }

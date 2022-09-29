@@ -1,5 +1,6 @@
 import { EmbedBuilder, GuildTextBasedChannel, roleMention, TextInputStyle, userMention } from 'discord.js';
 import nodemailer from 'nodemailer';
+import { validate as validateEmail } from 'deep-email-validator';
 import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
 import { encrypt, createMailOptions } from '../Util';
@@ -30,8 +31,9 @@ export default new Modal()
             throwVerifyLogsChannelNotFoundError
         ) as GuildTextBasedChannel;
 
-        const studentNumberIsValid =
-            /^\d{5}$/.test(studentNumber) && parseInt(studentNumber) > 15_000 && parseInt(studentNumber) < 23_000;
+        const email = `${studentNumber}@hetstreek.nl`;
+
+        const studentNumberIsValid = !Number.isNaN(Number(studentNumber)) && (await validateEmail(email)).valid;
 
         if (!studentNumberIsValid) {
             const embed = new EmbedBuilder()
@@ -97,12 +99,16 @@ export default new Modal()
         We heten je van harte welkom op de (onofficiële) Het Streek Discord server. Om te voorkomen dat mensen in de server gaan zonder zichzelf te verifiëren, moet je eventjes op de link hieronder klikken om toegang tot alle kanalen te krijgen. Je hoeft niks te doen, je wordt automatisch geverifieerd.
         https://hetstreek.net/auth?content=${encrypted.content}&iv=${encrypted.iv}
         
+        Door op deze link te klikken geef je Het Streek Discord toestemming om jouw Discord user ID en leerlingnummer op te slaan zolang je in de server zit. Je kan ten alle tijden je gegevens laten verwijderen door een developer.
+
         Let op! Als je deze link niet zelf hebt aangevraagd, verwijder deze email.
         
+        Link naar de Discord server: <a href="https://hetstreek.net/">klik hier</a>. 
+
         Groetjes,
         Het Streek Discord team.`;
 
-        const options = createMailOptions({ leerlingnummer: studentNumber, text });
+        const options = createMailOptions({ email, text });
 
         const res = await transporter.sendMail(options);
 

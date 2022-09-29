@@ -2,7 +2,7 @@ import { setInterval } from 'node:timers';
 import { ActivityType, EmbedBuilder, Events, GuildTextBasedChannel, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { io } from 'socket.io-client';
-import { ClientEvent } from '../Structures';
+import { ClientEvent, MessageActionRow } from '../Structures';
 import { throwDailyQuestionsChannelNotFoundError, throwDailyDilemmasChannelNotFoundError } from '../Errors';
 
 export default new ClientEvent()
@@ -79,6 +79,32 @@ export default new ClientEvent()
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
         });
 
+        scheduleJob(rule, async () => {
+            const verifyUserIds = (await client.verificationCollection.find().toArray()).map(u => u.userId);
+
+            const guild = await client.guilds.fetch(client.config.guildId);
+
+            const notVerified = guild.members.cache.filter(m => !verifyUserIds.includes(m.id));
+
+            const verifyButton = client.components.getButton('verify', true);
+            const helpButton = client.components.getButton('help', true);
+            const row = new MessageActionRow().setComponents(verifyButton, helpButton);
+
+            let usersSent = 0;
+
+            for (const member of notVerified.values()) {
+                await member
+                    .send({
+                        content: 'Je bent nog niet geverifieerd, doe dit zo snel mogelijk met de knop hieronder!',
+                        components: [row],
+                    })
+                    .then(() => usersSent++)
+                    .catch(() => null);
+            }
+
+            client.logger.info(`Sent reminders to ${usersSent} of ${notVerified.size} unverified users.`);
+        });
+
         const socket = io('http://localhost:3003');
 
         socket.on('connect', () => client.logger.info('Websocket connected.'));
@@ -89,9 +115,11 @@ export default new ClientEvent()
             const guild = await client.guilds.fetch(client.config.guildId);
             const member = await guild.members.fetch(data);
 
-            await member.send('Email verificatie successvol!');
+            if (!member.roles.cache.has(verifiedRoleId)) {
+                await member.roles.add(verifiedRoleId);
 
-            await member.roles.add(verifiedRoleId);
+                await member.send('Email verificatie successvol!').catch(() => null);
+            }
         });
 
         socket.on('disconnect', () => client.logger.warn('Websocket disconnected.'));

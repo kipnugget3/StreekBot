@@ -110,7 +110,7 @@ export class CommandManager extends CachedManager<AnyCommandStructure> {
         });
     }
 
-    register(structure: AnyCommandStructure): void {
+    register(structure: AnyCommandStructure) {
         const key = structure.name;
 
         if (!key) throw new Error('Command has no name set.');
@@ -118,7 +118,7 @@ export class CommandManager extends CachedManager<AnyCommandStructure> {
         this._register(key, structure);
     }
 
-    async deployAll(): Promise<void> {
+    async deployAll() {
         const { cache: commands, client } = this;
 
         if (!client.isReady()) throw new Error('Cannot deploy commands until the client is ready.');
@@ -185,10 +185,10 @@ export class ComponentManager extends CachedManager<AnyComponentStructure> {
         });
     }
 
-    register(structure: AnyComponentStructure): void {
+    register(structure: AnyComponentStructure) {
         const key = structure.data.custom_id;
 
-        if (!key) throw new Error('Component has no custom_id or url set.');
+        if (!key) throw new Error('Component has no custom_id set.');
 
         return this._register(key, structure);
     }

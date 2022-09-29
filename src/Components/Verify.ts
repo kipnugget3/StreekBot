@@ -1,4 +1,5 @@
 import { setTimeout } from 'node:timers';
+
 import { ButtonStyle, GuildTextBasedChannel, Snowflake } from 'discord.js';
 import nodemailer from 'nodemailer';
 import { Button } from '../Structures';
@@ -64,23 +65,29 @@ export default new Button()
                 },
             });
 
-            verifyLogsChannel.send(`${interaction.user} heeft de email nog een keer ontvangen.`);
-
             const encrypted = encrypt(user.id, encryptionKey);
 
             const text = `Hey leerling,
             
             We heten je van harte welkom op de (onofficiële) Het Streek Discord server. Om te voorkomen dat mensen in de server gaan zonder zichzelf te verifiëren, moet je eventjes op de link hieronder klikken om toegang tot alle kanalen te krijgen. Je hoeft niks te doen, je wordt automatisch geverifieerd.
             https://hetstreek.net/auth?content=${encrypted.content}&iv=${encrypted.iv}
+
+            Door op deze link te klikken geef je Het Streek Discord toestemming om jouw Discord user ID en leerlingnummer op te slaan zolang je in de server zit. Je kan ten alle tijden je gegevens laten verwijderen door een developer.
             
             Let op! Als je deze link niet zelf hebt aangevraagd, verwijder deze email.
             
+            Link naar de Discord server: <a href="https://hetstreek.net/">klik hier</a>. 
+
             Dit is niet de eerste keer dat we deze email sturen, als je hulp nodig hebt, klik op de "Hulp Nodig?" knop.
             
             Groetjes,
             Het Streek Discord team.`;
 
-            return transporter.sendMail(createMailOptions({ leerlingnummer: verifyUser.leerlingnummer, text }));
+            const email = `${verifyUser.leerlingnummer}@hetstreek.nl`;
+
+            await transporter.sendMail(createMailOptions({ email, text }));
+
+            return verifyLogsChannel.send(`${interaction.user} heeft de email nog een keer ontvangen.`);
         }
 
         const modal = client.modals.get('verify', true);
