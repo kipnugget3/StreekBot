@@ -37,6 +37,9 @@ export default new SlashCommand()
                 const embed = new EmbedBuilder().setTitle('Daily Questions').setTimestamp();
                 const fields: APIEmbedField[] = dailyQuestions.map((msg, idx) => ({ name: `#${idx + 1}`, value: msg }));
 
+                if (!fields.length)
+                    return interaction.editReply({ embeds: [embed.setDescription('No daily question found.')] });
+
                 return embedPages(interaction, embed, fields);
             }
             case 'add': {

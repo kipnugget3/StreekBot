@@ -75,6 +75,11 @@ export default new SlashCommand()
                             value: msg,
                         }));
 
+                        if (!fields.length)
+                            return interaction.editReply({
+                                embeds: [embed.setDescription('No welcome messages found.')],
+                            });
+
                         return embedPages(interaction, embed, fields);
                     }
                     case 'add': {
@@ -122,6 +127,11 @@ export default new SlashCommand()
                             name: `#${idx + 1}`,
                             value: msg,
                         }));
+
+                        if (!fields.length)
+                            return interaction.editReply({
+                                embeds: [embed.setDescription('No leave messages found.')],
+                            });
 
                         return embedPages(interaction, embed, fields);
                     }
