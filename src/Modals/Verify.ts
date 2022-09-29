@@ -1,6 +1,5 @@
 import { EmbedBuilder, GuildTextBasedChannel, roleMention, TextInputStyle, userMention } from 'discord.js';
 import nodemailer from 'nodemailer';
-import { validate as validateEmail } from 'deep-email-validator';
 import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
 import { encrypt, createMailOptions } from '../Util';
@@ -33,7 +32,7 @@ export default new Modal()
 
         const email = `${studentNumber}@hetstreek.nl`;
 
-        const studentNumberIsValid = !Number.isNaN(Number(studentNumber)) && (await validateEmail(email)).valid;
+        const studentNumberIsValid = !Number.isNaN(Number(studentNumber));
 
         if (!studentNumberIsValid) {
             const embed = new EmbedBuilder()
