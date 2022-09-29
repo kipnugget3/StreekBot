@@ -1,21 +1,17 @@
-import { EmbedBuilder, Events, GuildTextBasedChannel } from 'discord.js';
-import { throwWelcomeChannelNotFoundError } from '../Errors';
+import { EmbedBuilder, Events } from 'discord.js';
 import { ClientEvent } from '../Structures';
-import { formatMessage } from '../Util';
+import { formatMessage, getWelcomeChannel } from '../Util';
 
 export default new ClientEvent().setName(Events.GuildMemberRemove).setCallback(async member => {
     if (member.partial) return;
 
-    const { client, guild, user } = member;
+    const { client, user } = member;
 
-    const { welcomeChannelId, leaveMessages } = await client.getServerConfigSchema();
+    const { leaveMessages } = await client.getServerConfigSchema();
 
     await client.verificationCollection.deleteOne({ userId: user.id }).catch(() => null);
 
-    const welcomeChannel = guild.channels.cache.ensure(
-        welcomeChannelId,
-        throwWelcomeChannelNotFoundError
-    ) as GuildTextBasedChannel;
+    const welcomeChannel = await getWelcomeChannel(client);
 
     if (!welcomeChannel) return;
 

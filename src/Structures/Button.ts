@@ -11,7 +11,7 @@ import {
 } from 'discord.js';
 import { type Structure, ComponentStructure } from '../Util';
 
-export interface Button extends Structure<ButtonInteraction<'cached'>> {}
+export interface Button extends Structure<ButtonInteraction> {}
 
 @ComponentStructure
 export class Button extends ButtonBuilder {

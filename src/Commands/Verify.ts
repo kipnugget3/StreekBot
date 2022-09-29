@@ -54,6 +54,8 @@ export default new SlashCommand()
         const { client, options } = interaction;
         const { config } = client;
 
+        const guild = await client.guilds.fetch(config.guildId);
+
         const group = options.getSubcommandGroup(true);
         const subcommand = options.getSubcommand(true);
 
@@ -64,7 +66,7 @@ export default new SlashCommand()
             case 'users': {
                 switch (subcommand) {
                     case 'list': {
-                        const members = (await interaction.guild.members.fetch()).toJSON();
+                        const members = (await guild.members.fetch()).toJSON();
                         const fields: APIEmbedField[] = [];
 
                         for (const member of members) {
@@ -93,7 +95,7 @@ export default new SlashCommand()
                         const user = options.getUser('user', true);
                         const studentNumber = options.getString('student-number', true);
 
-                        const member = await interaction.guild.members.fetch(user.id);
+                        const member = await guild.members.fetch(user.id);
 
                         if (verifyUsers.some(u => u.userId === user.id))
                             await client.verificationCollection.deleteOne({ userId: user.id });
@@ -117,7 +119,7 @@ export default new SlashCommand()
 
                         await client.verificationCollection.deleteOne({ userId: user.id });
 
-                        const member = await interaction.guild.members.fetch(user.id).catch(() => null);
+                        const member = await guild.members.fetch(user.id).catch(() => null);
 
                         if (member) await member.roles.remove(verifiedRoleId);
 

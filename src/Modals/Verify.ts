@@ -1,8 +1,7 @@
-import { EmbedBuilder, GuildTextBasedChannel, roleMention, TextInputStyle, userMention } from 'discord.js';
+import { EmbedBuilder, roleMention, TextInputStyle, userMention } from 'discord.js';
 import nodemailer from 'nodemailer';
-import { throwVerifyLogsChannelNotFoundError } from '../Errors';
 import { Modal, TextInput } from '../Structures';
-import { encrypt, createMailOptions } from '../Util';
+import { encrypt, createMailOptions, getVerifyLogsChannel } from '../Util';
 
 export default new Modal()
     .setCustomId('verify')
@@ -21,14 +20,11 @@ export default new Modal()
 
         const studentNumber = interaction.fields.getTextInputValue('student_number');
 
-        const { client, guild, user } = interaction;
+        const { client, user } = interaction;
 
-        const { staffRoleId, verifyLogsChannelId } = await client.getServerConfigSchema();
+        const { staffRoleId } = await client.getServerConfigSchema();
 
-        const verifyLogsChannel = guild.channels.cache.ensure(
-            verifyLogsChannelId,
-            throwVerifyLogsChannelNotFoundError
-        ) as GuildTextBasedChannel;
+        const verifyLogsChannel = await getVerifyLogsChannel(client);
 
         const email = `${studentNumber}@hetstreek.nl`;
 

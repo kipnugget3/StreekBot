@@ -9,7 +9,7 @@ import {
 import { ModalActionRow } from './ActionRow';
 import { type Structure, ModalStructure } from '../Util';
 
-export interface Modal extends Structure<ModalSubmitInteraction<'cached'>> {}
+export interface Modal extends Structure<ModalSubmitInteraction> {}
 
 @ModalStructure
 export class Modal extends ModalBuilder {

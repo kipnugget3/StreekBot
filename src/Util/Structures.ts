@@ -25,7 +25,7 @@ function BaseStructure(type: StructureType) {
             [kStructureType] = type;
             [kCallback]!: Callback<any>;
 
-            async run(interaction: Interaction<'cached'>) {
+            async run(interaction: Interaction) {
                 try {
                     await (this[kCallback](interaction) as Awaitable<any>);
                 } catch (err) {

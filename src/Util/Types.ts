@@ -2,9 +2,9 @@ import type { BaseInteraction } from 'discord.js';
 import type { callback as kCallback, structureType as kStructureType, StructureType } from '.';
 import type { SlashCommand, ContextMenu, SelectMenu, Autocomplete, Modal, Button } from '../Structures';
 
-export type Callback<T extends BaseInteraction<'cached'>> = (interaction: T) => void;
+export type Callback<T extends BaseInteraction> = (interaction: T) => void;
 
-export interface Structure<T extends BaseInteraction<'cached'>> {
+export interface Structure<T extends BaseInteraction> {
     [kCallback]: Callback<T>;
     [kStructureType]: StructureType;
 

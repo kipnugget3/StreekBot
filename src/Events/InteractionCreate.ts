@@ -4,17 +4,6 @@ import { ClientEvent } from '../Structures';
 export default new ClientEvent().setName(Events.InteractionCreate).setCallback(async interaction => {
     const { client } = interaction;
 
-    if (!interaction.inCachedGuild()) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        if (['help', 'verify'].includes(interaction.customId)) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            return interaction.client.components.getButton(interaction.customId)?.run(interaction);
-        }
-        return;
-    }
-
     switch (interaction.type) {
         case InteractionType.ApplicationCommand: {
             const { commandType, commandName } = interaction;

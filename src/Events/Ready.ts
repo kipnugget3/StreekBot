@@ -1,9 +1,9 @@
 import { setInterval } from 'node:timers';
-import { ActivityType, EmbedBuilder, Events, GuildTextBasedChannel, roleMention } from 'discord.js';
+import { ActivityType, EmbedBuilder, Events, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { io } from 'socket.io-client';
 import { ClientEvent, MessageActionRow } from '../Structures';
-import { throwDailyQuestionsChannelNotFoundError, throwDailyDilemmasChannelNotFoundError } from '../Errors';
+import { getDailyDilemmasChannel, getDailyQuestionsChannel } from '../Util';
 
 export default new ClientEvent()
     .setName(Events.ClientReady)
@@ -24,13 +24,9 @@ export default new ClientEvent()
         rule.minute = rule.second = 0;
 
         scheduleJob(rule, async () => {
-            const { _id, dailyDilemmas, dailyDilemmasChannelId, dailyDilemmasRoleId } =
-                await client.getServerConfigSchema();
+            const { _id, dailyDilemmas, dailyDilemmasRoleId } = await client.getServerConfigSchema();
 
-            const dailyDilemmasChannel = client.channels.cache.ensure(
-                dailyDilemmasChannelId,
-                throwDailyDilemmasChannelNotFoundError
-            ) as GuildTextBasedChannel;
+            const dailyDilemmasChannel = await getDailyDilemmasChannel(client);
 
             const index = Math.floor(Math.random() * dailyDilemmas.length);
             const dilemma = dailyDilemmas[index];
@@ -52,13 +48,9 @@ export default new ClientEvent()
         });
 
         scheduleJob(rule, async () => {
-            const { _id, dailyQuestions, dailyQuestionsChannelId, dailyQuestionsRoleId } =
-                await client.getServerConfigSchema();
+            const { _id, dailyQuestions, dailyQuestionsRoleId } = await client.getServerConfigSchema();
 
-            const dailyQuestionsChannel = client.channels.cache.ensure(
-                dailyQuestionsChannelId,
-                throwDailyQuestionsChannelNotFoundError
-            ) as GuildTextBasedChannel;
+            const dailyQuestionsChannel = await getDailyQuestionsChannel(client);
 
             const index = Math.floor(Math.random() * dailyQuestions.length);
             const question = dailyQuestions[index];

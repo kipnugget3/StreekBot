@@ -56,13 +56,13 @@ interface EmbedPagesOptions {
 }
 
 export async function embedPages(
-    interaction: Interaction<'cached'>,
+    interaction: Interaction,
     embed: EmbedBuilder,
     fields: APIEmbedField[],
     options?: EmbedPagesOptions
 ): Promise<void>;
 export async function embedPages(
-    interaction: Interaction<'cached'>,
+    interaction: Interaction,
     embed: EmbedBuilder,
     fields: APIEmbedField[],
     { perPage = 5 }: EmbedPagesOptions = {}

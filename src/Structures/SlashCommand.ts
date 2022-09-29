@@ -7,10 +7,10 @@ import {
 import { CommandStructure, type Structure } from '../Util';
 
 declare module 'discord.js' {
-    interface SlashCommandSubcommandsOnlyBuilder extends Structure<ChatInputCommandInteraction<'cached'>> {}
+    interface SlashCommandSubcommandsOnlyBuilder extends Structure<ChatInputCommandInteraction> {}
 }
 
-export interface SlashCommand extends Structure<ChatInputCommandInteraction<'cached'>> {}
+export interface SlashCommand extends Structure<ChatInputCommandInteraction> {}
 
 @CommandStructure
 export class SlashCommand extends SlashCommandBuilder {

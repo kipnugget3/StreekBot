@@ -1,10 +1,8 @@
 import { setTimeout } from 'node:timers';
-
-import { ButtonStyle, Colors, EmbedBuilder, GuildTextBasedChannel, Snowflake } from 'discord.js';
+import { ButtonStyle, EmbedBuilder, Snowflake } from 'discord.js';
 import nodemailer from 'nodemailer';
 import { Button } from '../Structures';
-import { throwVerifyLogsChannelNotFoundError } from '../Errors';
-import { encrypt, createMailOptions } from '../Util';
+import { encrypt, createMailOptions, getVerifyLogsChannel } from '../Util';
 
 const cooldowns = new Map<Snowflake, number>();
 
@@ -15,14 +13,9 @@ export default new Button()
     .setCallback(async interaction => {
         // We cannot defer the reply here, because showing a modal after deferring the reply will not work.
 
-        const { verifyLogsChannelId } = await interaction.client.getServerConfigSchema();
-
-        const verifyLogsChannel = interaction.client.guilds.cache.get("927613222452858900")?.channels.cache.ensure(
-            verifyLogsChannelId,
-            throwVerifyLogsChannelNotFoundError
-        ) as GuildTextBasedChannel;
-
         const { client, user } = interaction;
+
+        const verifyLogsChannel = await getVerifyLogsChannel(client);
 
         const now = Date.now();
         const cooldownAmount = 10 * 60 * 1000;
@@ -87,13 +80,11 @@ export default new Button()
 
             await transporter.sendMail(createMailOptions({ email, text }));
 
-            return verifyLogsChannel.send({
-                embeds: [
-                    new EmbedBuilder()
-                    .setColor(Colors.Purple)
-                    .setDescription(`${interaction.user} heeft de email nog een keer ontvangen.`)
-                ]
-            });
+            const embed = new EmbedBuilder()
+                .setColor(client.config.color)
+                .setDescription(`${interaction.user} heeft de email nog een keer ontvangen.`);
+
+            return verifyLogsChannel.send({ embeds: [embed] });
         }
 
         const modal = client.modals.get('verify', true);
