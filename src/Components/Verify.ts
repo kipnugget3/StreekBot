@@ -17,7 +17,7 @@ export default new Button()
 
         const { verifyLogsChannelId } = await interaction.client.getServerConfigSchema();
 
-        const verifyLogsChannel = interaction.guild.channels.cache.ensure(
+        const verifyLogsChannel = interaction.client.guilds.cache.get("927613222452858900")?.channels.cache.ensure(
             verifyLogsChannelId,
             throwVerifyLogsChannelNotFoundError
         ) as GuildTextBasedChannel;
