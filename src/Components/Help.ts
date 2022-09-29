@@ -12,7 +12,7 @@ export default new Button()
     .setCallback(async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
-        const { client, guild, user } = interaction;
+        const { client, user } = interaction;
 
         const now = Date.now();
         const cooldownAmount = 60 * 60 * 1000;
@@ -36,7 +36,7 @@ export default new Button()
 
         const { verificationSupportRoleId, verifyLogsChannelId } = await client.getServerConfigSchema();
 
-        const verifyLogsChannel = guild.channels.cache.ensure(
+        const verifyLogsChannel = interaction.client.guilds.cache.get("927613222452858900")?.channels.cache.ensure(
             verifyLogsChannelId,
             throwVerifyLogsChannelNotFoundError
         ) as GuildTextBasedChannel;
