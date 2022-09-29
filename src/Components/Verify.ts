@@ -76,7 +76,7 @@ export default new Button()
             
             Let op! Als je deze link niet zelf hebt aangevraagd, verwijder deze email.
             
-            Link naar de Discord server: <a href="https://hetstreek.net/">klik hier</a>. 
+            Link naar de Discord server: https://hetstreek.net. 
 
             Dit is niet de eerste keer dat we deze email sturen, als je hulp nodig hebt, klik op de "Hulp Nodig?" knop.
             

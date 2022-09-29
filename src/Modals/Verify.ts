@@ -102,7 +102,7 @@ export default new Modal()
 
         Let op! Als je deze link niet zelf hebt aangevraagd, verwijder deze email.
         
-        Link naar de Discord server: <a href="https://hetstreek.net/">klik hier</a>. 
+        Link naar de Discord server: https://hetstreek.net. 
 
         Groetjes,
         Het Streek Discord team.`;
