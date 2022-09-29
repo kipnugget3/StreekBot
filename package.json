@@ -12,7 +12,7 @@
         "build": "tsc",
         "start": "node dist/index.js",
         "test": "npm run lint",
-        "prettier": "prettier --write .",
+        "prettier": "prettier --write src",
         "prepare": "husky install",
         "deploy": "sh ./deploy.sh"
     },
@@ -36,7 +36,6 @@
     },
     "homepage": "https://github.com/HetStreek/StreekBot#readme",
     "dependencies": {
-        "@types/nodemailer": "^6.4.6",
         "discord.js": "^14.5.0",
         "mongodb": "^4.9.1",
         "node-schedule": "^2.1.0",
@@ -48,6 +47,7 @@
         "@commitlint/cli": "^17.1.2",
         "@commitlint/config-angular": "^17.1.0",
         "@types/node-schedule": "^2.1.0",
+        "@types/nodemailer": "^6.4.6",
         "@typescript-eslint/eslint-plugin": "^5.36.1",
         "@typescript-eslint/parser": "^5.36.1",
         "dotenv": "^16.0.2",
