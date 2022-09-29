@@ -5,10 +5,10 @@ export default new ClientEvent().setName(Events.InteractionCreate).setCallback(a
     if (!interaction.inCachedGuild()) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        if (['help', 'verify'].includes(interaction.commandName)) {
+        if (['help', 'verify'].includes(interaction.customId)) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
-            return interaction.commands.getSlashCommand(interaction.commandName)?.run(interaction);
+            return interaction.components.getButton(interaction.customId)?.run(interaction);
         }
         return;
     }
