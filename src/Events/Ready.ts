@@ -3,7 +3,7 @@ import { ActivityType, EmbedBuilder, Events, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { io } from 'socket.io-client';
 import { ClientEvent, MessageActionRow } from '../Structures';
-import { getDailyDilemmasChannel, getDailyQuestionsChannel } from '../Util';
+import { getDailyDilemmasChannel, getDailyQuestionsChannel, getVerifyLogsChannel } from '../Util';
 
 export default new ClientEvent()
     .setName(Events.ClientReady)
@@ -103,15 +103,27 @@ export default new ClientEvent()
 
         socket.on('verify', async (data: string) => {
             const { verifiedRoleId } = await client.getServerConfigSchema();
+            const verifyUser = await client.verificationCollection.findOne({ userId: data });
+
+            if (!verifyUser) return;
 
             const guild = await client.guilds.fetch(client.config.guildId);
             const member = await guild.members.fetch(data);
+
+            const verifyLogsChannel = await getVerifyLogsChannel(client);
 
             if (!member.roles.cache.has(verifiedRoleId)) {
                 await member.roles.add(verifiedRoleId);
 
                 await member.send('Email verificatie successvol!').catch(() => null);
             }
+
+            const embed = new EmbedBuilder()
+                .setDescription(`${member} is geverifieerd!`)
+                .addFields({ name: 'Leerlingnummer', value: verifyUser.leerlingnummer })
+                .setColor(client.config.color);
+
+            await verifyLogsChannel.send({ embeds: [embed] });
         });
 
         socket.on('disconnect', () => client.logger.warn('Websocket disconnected.'));
