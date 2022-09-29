@@ -1,6 +1,6 @@
 import { setTimeout } from 'node:timers';
 
-import { ButtonStyle, GuildTextBasedChannel, Snowflake } from 'discord.js';
+import { ButtonStyle, Colors, EmbedBuilder, GuildTextBasedChannel, Snowflake } from 'discord.js';
 import nodemailer from 'nodemailer';
 import { Button } from '../Structures';
 import { throwVerifyLogsChannelNotFoundError } from '../Errors';
@@ -87,7 +87,13 @@ export default new Button()
 
             await transporter.sendMail(createMailOptions({ email, text }));
 
-            return verifyLogsChannel.send(`${interaction.user} heeft de email nog een keer ontvangen.`);
+            return verifyLogsChannel.send({
+                embeds: [
+                    new EmbedBuilder()
+                    .setColor(Colors.Purple)
+                    .setDescription(`${interaction.user} heeft de email nog een keer ontvangen.`)
+                ]
+            });
         }
 
         const modal = client.modals.get('verify', true);
