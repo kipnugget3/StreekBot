@@ -2,7 +2,7 @@ import { setInterval } from 'node:timers';
 import { ActivityType, EmbedBuilder, Events, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { io } from 'socket.io-client';
-import { ClientEvent, MessageActionRow } from '../Structures';
+import { ClientEvent } from '../Structures';
 import { getDailyDilemmasChannel, getDailyQuestionsChannel, getVerifyLogsChannel } from '../Util';
 
 export default new ClientEvent()
@@ -17,13 +17,13 @@ export default new ClientEvent()
 
         setInterval(setClientActivity, 60 * 60 * 1000);
 
-        const rule = new RecurrenceRule();
+        const dailyRule = new RecurrenceRule();
 
-        rule.tz = 'Europe/Amsterdam';
-        rule.hour = 9;
-        rule.minute = rule.second = 0;
+        dailyRule.tz = 'Europe/Amsterdam';
+        dailyRule.hour = 9;
+        dailyRule.minute = dailyRule.second = 0;
 
-        scheduleJob(rule, async () => {
+        scheduleJob(dailyRule, async () => {
             const { _id, dailyDilemmas, dailyDilemmasRoleId } = await client.getServerConfigSchema();
 
             const dailyDilemmasChannel = await getDailyDilemmasChannel(client);
@@ -47,7 +47,7 @@ export default new ClientEvent()
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyDilemmas } });
         });
 
-        scheduleJob(rule, async () => {
+        scheduleJob(dailyRule, async () => {
             const { _id, dailyQuestions, dailyQuestionsRoleId } = await client.getServerConfigSchema();
 
             const dailyQuestionsChannel = await getDailyQuestionsChannel(client);
@@ -69,32 +69,6 @@ export default new ClientEvent()
             dailyQuestions.splice(index, 1);
 
             await client.serverConfigCollection.updateOne({ _id }, { $set: { dailyQuestions } });
-        });
-
-        scheduleJob(rule, async () => {
-            const verifyUserIds = (await client.verificationCollection.find().toArray()).map(u => u.userId);
-
-            const guild = await client.guilds.fetch(client.config.guildId);
-
-            const notVerified = guild.members.cache.filter(m => !verifyUserIds.includes(m.id));
-
-            const verifyButton = client.components.getButton('verify', true);
-            const helpButton = client.components.getButton('help', true);
-            const row = new MessageActionRow().setComponents(verifyButton, helpButton);
-
-            let usersSent = 0;
-
-            for (const member of notVerified.values()) {
-                await member
-                    .send({
-                        content: 'Je bent nog niet geverifieerd, doe dit zo snel mogelijk met de knop hieronder!',
-                        components: [row],
-                    })
-                    .then(() => usersSent++)
-                    .catch(() => null);
-            }
-
-            client.logger.info(`Sent reminders to ${usersSent} of ${notVerified.size} unverified users.`);
         });
 
         const socket = io('http://localhost:3003');

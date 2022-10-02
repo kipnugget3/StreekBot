@@ -40,10 +40,10 @@ function formatDiscordLog(log: Log) {
 }
 
 export class Logger {
-    webhookClient: WebhookClient;
+    readonly webhook: WebhookClient;
 
     constructor(public readonly client: Client) {
-        this.webhookClient = new WebhookClient({ url: client.config.webhookURL });
+        this.webhook = new WebhookClient({ url: client.config.webhookURL });
     }
 
     private _log(type: LogType, content: string | Error) {
@@ -56,13 +56,15 @@ export class Logger {
         // eslint-disable-next-line no-console
         console.log(formatConsoleLog(log));
 
-        if (!this.client.isReady()) return;
+        const { client, webhook } = this;
+
+        if (!client.isReady()) return;
 
         const embed = formatDiscordLog(log);
 
-        this.webhookClient.send({
-            username: 'StreekBot Logs',
-            avatarURL: this.client.user.displayAvatarURL(),
+        webhook.send({
+            username: `${client.user.username} Logs`,
+            avatarURL: client.user.displayAvatarURL(),
             embeds: [embed],
         });
     }

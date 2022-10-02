@@ -15,7 +15,7 @@ export default new SlashCommand()
 
         const guild = await client.guilds.fetch(client.config.guildId);
 
-        const notVerified = guild.members.cache.filter(m => !m.roles.cache.has(verifiedRoleId));
+        const notVerified = guild.members.cache.filter(m => !m.user.bot && !m.roles.cache.has(verifiedRoleId));
 
         const verifyButton = client.components.getButton('verify', true);
         const helpButton = client.components.getButton('help', true);
