@@ -1,4 +1,5 @@
 import type { Client, GuildTextBasedChannel, Snowflake } from 'discord.js';
+import type { WithId } from 'mongodb';
 import {
     throwDailyDilemmasChannelNotFoundError,
     throwDailyQuestionsChannelNotFoundError,
@@ -9,6 +10,16 @@ import {
 export interface VerifySchema {
     userId: string;
     leerlingnummer: string;
+}
+
+export function getVerifyUsers(client: Client<true>) {
+    return client.verificationCollection.find().toArray();
+}
+
+interface GetVerifyUserOptions extends Partial<WithId<VerifySchema>> {}
+
+export function getVerifyUser(client: Client<true>, options: GetVerifyUserOptions) {
+    return client.verificationCollection.findOne(options);
 }
 
 export interface ServerConfigSchema {

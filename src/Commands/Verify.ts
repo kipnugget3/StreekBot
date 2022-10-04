@@ -1,6 +1,6 @@
 import { type APIEmbedField, EmbedBuilder, type GuildTextBasedChannel, inlineCode, userMention } from 'discord.js';
 import { MessageActionRow, SlashCommand } from '../Structures';
-import { embedPages } from '../Util';
+import { embedPages, getVerifyUser, getVerifyUsers } from '../Util';
 
 export default new SlashCommand()
     .setName('verify')
@@ -60,7 +60,7 @@ export default new SlashCommand()
         const subcommand = options.getSubcommand(true);
 
         const { verifiedRoleId } = await client.getServerConfigSchema();
-        const verifyUsers = await client.verificationCollection.find().toArray();
+        const verifyUsers = await getVerifyUsers(client);
 
         switch (group) {
             case 'users': {
@@ -70,9 +70,7 @@ export default new SlashCommand()
                         const fields: APIEmbedField[] = [];
 
                         for (const member of members) {
-                            const verifyUser = await client.verificationCollection.findOne({
-                                userId: member.id,
-                            });
+                            const verifyUser = await getVerifyUser(client, { userId: member.id });
 
                             const mention = userMention(verifyUser?.userId ?? member.id);
                             const studentNumber = inlineCode(verifyUser?.leerlingnummer ?? '-');

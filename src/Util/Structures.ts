@@ -45,7 +45,6 @@ function BaseStructure(type: StructureType) {
                                   .catch(() => null)
                             : interaction
                                   .deleteReply()
-                                  .catch(() => null)
                                   .then(() => interaction.followUp({ content, ephemeral: true }))
                                   .catch(() => null)
                         : interaction.reply({ content, ephemeral: true }).catch(() => null));

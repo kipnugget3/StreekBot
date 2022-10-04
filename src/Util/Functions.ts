@@ -71,12 +71,9 @@ export async function embedPages(
 
     if (!interaction.deferred) await interaction.deferReply();
 
-    const pages = Array.from({ length: Math.ceil(fields.length / perPage) }, (_, idx) => {
-        const start = idx * perPage;
-        const end = start + perPage;
-
-        return fields.slice(start, end);
-    });
+    const pages = Array.from({ length: Math.ceil(fields.length / perPage) }, (_, idx) =>
+        fields.slice(idx * perPage, (idx + 1) * perPage)
+    );
 
     let page = 0;
 

@@ -3,7 +3,7 @@ import { ActivityType, EmbedBuilder, Events, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { io } from 'socket.io-client';
 import { ClientEvent } from '../Structures';
-import { getDailyDilemmasChannel, getDailyQuestionsChannel, getVerifyLogsChannel } from '../Util';
+import { getDailyDilemmasChannel, getDailyQuestionsChannel, getVerifyLogsChannel, getVerifyUser } from '../Util';
 
 export default new ClientEvent()
     .setName(Events.ClientReady)
@@ -77,7 +77,8 @@ export default new ClientEvent()
 
         socket.on('verify', async (data: string) => {
             const { verifiedRoleId } = await client.getServerConfigSchema();
-            const verifyUser = await client.verificationCollection.findOne({ userId: data });
+
+            const verifyUser = await getVerifyUser(client, { userId: data });
 
             if (!verifyUser) return;
 

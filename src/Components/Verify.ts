@@ -2,7 +2,7 @@ import { setTimeout } from 'node:timers';
 import { ButtonStyle, EmbedBuilder, Snowflake } from 'discord.js';
 import nodemailer from 'nodemailer';
 import { Button } from '../Structures';
-import { encrypt, createMailOptions, getVerifyLogsChannel } from '../Util';
+import { encrypt, createMailOptions, getVerifyLogsChannel, getVerifyUser } from '../Util';
 
 const cooldowns = new Map<Snowflake, number>();
 
@@ -38,7 +38,7 @@ export default new Button()
 
         setTimeout(() => cooldowns.delete(user.id), cooldownAmount);
 
-        const verifyUser = await client.verificationCollection.findOne({ userId: interaction.user.id });
+        const verifyUser = await getVerifyUser(client, { userId: interaction.user.id });
 
         if (verifyUser) {
             interaction.reply({

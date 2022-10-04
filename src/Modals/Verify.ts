@@ -1,11 +1,11 @@
 import { EmbedBuilder, roleMention, TextInputStyle, userMention } from 'discord.js';
 import nodemailer from 'nodemailer';
 import { Modal, TextInput } from '../Structures';
-import { encrypt, createMailOptions, getVerifyLogsChannel } from '../Util';
+import { encrypt, createMailOptions, getVerifyLogsChannel, getVerifyUser } from '../Util';
 
 export default new Modal()
     .setCustomId('verify')
-    .setTitle('Verifieer jezelf.')
+    .setTitle('Verifieer jezelf')
     .addModalComponents(
         new TextInput()
             .setCustomId('student_number')
@@ -28,7 +28,7 @@ export default new Modal()
 
         const email = `${studentNumber}@hetstreek.nl`;
 
-        const studentNumberIsValid = !Number.isNaN(Number(studentNumber));
+        const studentNumberIsValid = !isNaN(Number(studentNumber));
 
         if (!studentNumberIsValid) {
             const embed = new EmbedBuilder()
@@ -38,9 +38,7 @@ export default new Modal()
             return interaction.editReply({ embeds: [embed] });
         }
 
-        const verifyUsers = await client.verificationCollection.find().toArray();
-
-        const verifyUserWithStudentNumber = verifyUsers.find(user => user.leerlingnummer === studentNumber);
+        const verifyUserWithStudentNumber = await getVerifyUser(client, { leerlingnummer: studentNumber });
 
         if (verifyUserWithStudentNumber) {
             const logEmbed = new EmbedBuilder()

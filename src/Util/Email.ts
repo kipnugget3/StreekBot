@@ -1,12 +1,12 @@
 import { Buffer } from 'node:buffer';
-import crypto from 'node:crypto';
+import { createCipheriv, randomBytes } from 'node:crypto';
 import type { SendMailOptions } from 'nodemailer';
 
 export const algorithm = 'aes-256-ctr';
 
 export function encrypt(text: string, encryptionKey: string) {
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(algorithm, encryptionKey, iv);
+    const iv = randomBytes(16);
+    const cipher = createCipheriv(algorithm, encryptionKey, iv);
     const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
 
     return {

@@ -6,13 +6,6 @@ const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, Gatew
 
 const client = new Client({ intents });
 
-process.setUncaughtExceptionCaptureCallback(err => {
-    try {
-        client.logger.error(err);
-    } catch {
-        // eslint-disable-next-line no-console
-        console.error(err);
-    }
-});
+process.setUncaughtExceptionCaptureCallback(err => client.logger.error(err));
 
 client.build();
