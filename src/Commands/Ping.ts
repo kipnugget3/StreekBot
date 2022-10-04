@@ -1,6 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 import { SlashCommand } from '../Structures';
 
+//Command that returns the network latency to the user
 export default new SlashCommand()
     .setName('ping')
     .setDescription('Bot ping.')
@@ -8,7 +9,6 @@ export default new SlashCommand()
         await interaction.deferReply();
 
         const { client } = interaction;
-        //returns ping
         const embed = new EmbedBuilder().setDescription(`🏓 \`${client.ws.ping}ms\``).setColor(client.config.color);
 
         await interaction.editReply({ embeds: [embed] });
