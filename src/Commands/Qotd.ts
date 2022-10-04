@@ -2,17 +2,17 @@ import { APIEmbedField, EmbedBuilder } from 'discord.js';
 import { SlashCommand } from '../Structures';
 import { embedPages, getServerConfig } from '../Util';
 
-//Command for managing daily questions
+// Command for managing daily questions
 export default new SlashCommand()
     .setName('qotd')
     .setDescription('Manage the daily questions.')
     .setDMPermission(false)
     .setDefaultMemberPermissions(0n)
     .addSubcommand(subcommand => 
-        //Subcommand to list all current questions
+        // Subcommand to list all current questions
         subcommand.setName('list').setDescription('List all the daily questions.'))
     .addSubcommand(subcommand =>
-        //subcommand to add questions
+        // Subcommand to add questions
         subcommand
             .setName('add')
             .setDescription('Add a question to the daily questions.')
@@ -21,7 +21,7 @@ export default new SlashCommand()
             )
     )
     .addSubcommand(subcommand =>
-        //Subcommand to remove questions
+        // Subcommand to remove questions
         subcommand
             .setName('remove')
             .setDescription('Remove a question from the daily questions.')
@@ -38,7 +38,7 @@ export default new SlashCommand()
         const { _id, dailyQuestions } = await getServerConfig(client);
 
         switch (subcommand) {
-            //returns a list of the questions
+            // Returns a list of the questions
             case 'list': {
                 const embed = new EmbedBuilder().setTitle('Daily Questions').setTimestamp();
                 const fields: APIEmbedField[] = dailyQuestions.map((msg, idx) => ({ name: `#${idx + 1}`, value: msg }));
@@ -48,7 +48,7 @@ export default new SlashCommand()
 
                 return embedPages(interaction, embed, fields);
             }
-            //Adds a question to the daily questions array
+            // Adds a question to the daily questions array
             case 'add': {
                 const question = interaction.options.getString('question', true);
 
@@ -61,7 +61,7 @@ export default new SlashCommand()
 
                 return interaction.editReply({ embeds: [embed] });
             }
-            //remove a question indicated by index number from the dailyquestions array. 
+            // Remove a question indicated by index number from the dailyquestions array. 
             case 'remove': {
                 const index = interaction.options.getInteger('index', true);
 
