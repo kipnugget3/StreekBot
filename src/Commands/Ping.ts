@@ -8,7 +8,7 @@ export default new SlashCommand()
         await interaction.deferReply();
 
         const { client } = interaction;
-        //returns ping
+
         const embed = new EmbedBuilder().setDescription(`🏓 \`${client.ws.ping}ms\``).setColor(client.config.color);
 
         await interaction.editReply({ embeds: [embed] });
