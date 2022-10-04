@@ -1,7 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 import { SlashCommand } from '../Structures';
 
-//Command that returns the network latency to the user
+// Command that returns the network latency to the user.
 export default new SlashCommand()
     .setName('ping')
     .setDescription('Bot ping.')
