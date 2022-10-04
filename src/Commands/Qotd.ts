@@ -8,9 +8,10 @@ export default new SlashCommand()
     .setDescription('Manage the daily questions.')
     .setDMPermission(false)
     .setDefaultMemberPermissions(0n)
-    .addSubcommand(subcommand => 
+    .addSubcommand(subcommand =>
         // Subcommand to list all current questions
-        subcommand.setName('list').setDescription('List all the daily questions.'))
+        subcommand.setName('list').setDescription('List all the daily questions.')
+    )
     .addSubcommand(subcommand =>
         // Subcommand to add questions
         subcommand
@@ -61,7 +62,7 @@ export default new SlashCommand()
 
                 return interaction.editReply({ embeds: [embed] });
             }
-            // Remove a question indicated by index number from the dailyquestions array. 
+            // Remove a question indicated by index number from the dailyquestions array.
             case 'remove': {
                 const index = interaction.options.getInteger('index', true);
 
