@@ -1,6 +1,6 @@
 import { APIEmbedField, EmbedBuilder } from 'discord.js';
 import { SlashCommand } from '../Structures';
-import { embedPages } from '../Util';
+import { embedPages, getServerConfig } from '../Util';
 
 export default new SlashCommand()
     .setName('daily-dilemma')
@@ -30,7 +30,7 @@ export default new SlashCommand()
         const { client, options } = interaction;
         const subcommand = options.getSubcommand(true);
         const { config, serverConfigCollection } = client;
-        const { _id, dailyDilemmas } = await client.getServerConfigSchema();
+        const { _id, dailyDilemmas } = await getServerConfig(client);
 
         switch (subcommand) {
             case 'list': {

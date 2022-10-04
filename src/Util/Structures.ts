@@ -1,4 +1,4 @@
-import { ApplicationCommandType, Awaitable, ComponentType, Interaction, isJSONEncodable } from 'discord.js';
+import { ApplicationCommandType, ComponentType, Interaction, isJSONEncodable } from 'discord.js';
 import { callback as kCallback, structureType as kStructureType } from './Symbols';
 import type {
     AnyAutocompleteStructure,
@@ -17,17 +17,17 @@ export enum StructureType {
     Modal = 'Modal',
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 function BaseStructure(type: StructureType): ClassDecorator;
 function BaseStructure(type: StructureType) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (target: any) =>
         class extends target {
             [kStructureType] = type;
-            [kCallback]!: Callback<any>;
+            [kCallback]!: Callback<Interaction>;
 
             async run(interaction: Interaction) {
                 try {
-                    await (this[kCallback](interaction) as Awaitable<any>);
+                    await this[kCallback](interaction);
                 } catch (err) {
                     if (!(err instanceof Error)) return;
 
@@ -37,7 +37,7 @@ function BaseStructure(type: StructureType) {
 
                     const content = 'Er is iets misgegaan!';
 
-                    await (interaction.deferred || interaction.replied
+                    interaction.deferred || interaction.replied
                         ? interaction.ephemeral
                             ? interaction
                                   .editReply({ content, embeds: [], components: [] })
@@ -47,11 +47,11 @@ function BaseStructure(type: StructureType) {
                                   .deleteReply()
                                   .then(() => interaction.followUp({ content, ephemeral: true }))
                                   .catch(() => null)
-                        : interaction.reply({ content, ephemeral: true }).catch(() => null));
+                        : interaction.reply({ content, ephemeral: true }).catch(() => null);
                 }
             }
 
-            setCallback(cb: Callback<any>) {
+            setCallback(cb: Callback<Interaction>) {
                 this[kCallback] = cb;
 
                 return this;

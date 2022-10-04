@@ -1,6 +1,6 @@
 import { type APIEmbedField, EmbedBuilder, type GuildTextBasedChannel, inlineCode, userMention } from 'discord.js';
 import { MessageActionRow, SlashCommand } from '../Structures';
-import { embedPages, getVerifyUser, getVerifyUsers } from '../Util';
+import { embedPages, getServerConfig, getVerifyUser, getVerifyUsers } from '../Util';
 
 export default new SlashCommand()
     .setName('verify')
@@ -59,7 +59,7 @@ export default new SlashCommand()
         const group = options.getSubcommandGroup(true);
         const subcommand = options.getSubcommand(true);
 
-        const { verifiedRoleId } = await client.getServerConfigSchema();
+        const { verifiedRoleId } = await getServerConfig(client);
         const verifyUsers = await getVerifyUsers(client);
 
         switch (group) {

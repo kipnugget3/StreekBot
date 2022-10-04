@@ -1,11 +1,11 @@
 import { EmbedBuilder, Events } from 'discord.js';
 import { ClientEvent } from '../Structures';
-import { formatMessage, getWelcomeChannel } from '../Util';
+import { formatMessage, getServerConfig, getWelcomeChannel } from '../Util';
 
 export default new ClientEvent().setName(Events.GuildMemberAdd).setCallback(async member => {
     const { client, user } = member;
 
-    const { welcomeMessages } = await client.getServerConfigSchema();
+    const { welcomeMessages } = await getServerConfig(client);
 
     const welcomeChannel = await getWelcomeChannel(client);
 

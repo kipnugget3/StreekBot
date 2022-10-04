@@ -1,7 +1,7 @@
 import { EmbedBuilder, roleMention, TextInputStyle, userMention } from 'discord.js';
 import nodemailer from 'nodemailer';
 import { Modal, TextInput } from '../Structures';
-import { encrypt, createMailOptions, getVerifyLogsChannel, getVerifyUser } from '../Util';
+import { encrypt, createMailOptions, getVerifyLogsChannel, getVerifyUser, getServerConfig } from '../Util';
 
 export default new Modal()
     .setCustomId('verify')
@@ -22,8 +22,7 @@ export default new Modal()
 
         const { client, user } = interaction;
 
-        const { staffRoleId } = await client.getServerConfigSchema();
-
+        const { staffRoleId } = await getServerConfig(client);
         const verifyLogsChannel = await getVerifyLogsChannel(client);
 
         const email = `${studentNumber}@hetstreek.nl`;

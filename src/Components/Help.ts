@@ -1,7 +1,7 @@
 import { setTimeout } from 'node:timers';
 import { ButtonStyle, EmbedBuilder, roleMention, Snowflake } from 'discord.js';
 import { Button } from '../Structures';
-import { getVerifyLogsChannel } from '../Util';
+import { getServerConfig, getVerifyLogsChannel } from '../Util';
 
 const cooldowns = new Map<Snowflake, number>();
 
@@ -34,7 +34,7 @@ export default new Button()
 
         setTimeout(() => cooldowns.delete(user.id), cooldownAmount);
 
-        const { verificationSupportRoleId } = await client.getServerConfigSchema();
+        const { verificationSupportRoleId } = await getServerConfig(client);
 
         const verifyLogsChannel = await getVerifyLogsChannel(client);
 

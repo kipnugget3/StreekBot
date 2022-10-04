@@ -1,4 +1,5 @@
 import { MessageActionRow, SlashCommand } from '../Structures';
+import { getServerConfig } from '../Util';
 
 export default new SlashCommand()
     .setName('reminder')
@@ -11,7 +12,7 @@ export default new SlashCommand()
     .setCallback(async interaction => {
         const { client } = interaction;
 
-        const { verifiedRoleId } = await client.getServerConfigSchema();
+        const { verifiedRoleId } = await getServerConfig(client);
 
         const guild = await client.guilds.fetch(client.config.guildId);
 

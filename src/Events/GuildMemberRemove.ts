@@ -1,13 +1,13 @@
 import { EmbedBuilder, Events } from 'discord.js';
 import { ClientEvent } from '../Structures';
-import { formatMessage, getWelcomeChannel } from '../Util';
+import { formatMessage, getServerConfig, getWelcomeChannel } from '../Util';
 
 export default new ClientEvent().setName(Events.GuildMemberRemove).setCallback(async member => {
     if (member.partial) return;
 
     const { client, user } = member;
 
-    const { leaveMessages } = await client.getServerConfigSchema();
+    const { leaveMessages } = await getServerConfig(client);
 
     await client.verificationCollection.deleteOne({ userId: user.id }).catch(() => null);
 

@@ -41,7 +41,7 @@ export default new Button()
         const verifyUser = await getVerifyUser(client, { userId: interaction.user.id });
 
         if (verifyUser) {
-            interaction.reply({
+            await interaction.reply({
                 content:
                     'Je bent al in ons systeem! We hebben de email nog een keer naar je gestuurd, volg de instructies voor toegang! ' +
                     `Gebruikte email: \`${verifyUser.leerlingnummer}@hetstreek.nl\``,
@@ -89,5 +89,5 @@ export default new Button()
 
         const modal = client.modals.get('verify', true);
 
-        return interaction.showModal(modal);
+        await interaction.showModal(modal);
     });

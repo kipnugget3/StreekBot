@@ -1,6 +1,6 @@
 import { APIEmbedField, EmbedBuilder } from 'discord.js';
 import { SlashCommand } from '../Structures';
-import { embedPages } from '../Util';
+import { embedPages, getServerConfig } from '../Util';
 
 export default new SlashCommand()
     .setName('welcome')
@@ -57,9 +57,10 @@ export default new SlashCommand()
         const group = interaction.options.getSubcommandGroup(true);
         const subcommand = interaction.options.getSubcommand(true);
 
-        const { config, serverConfigCollection } = interaction.client;
+        const { client } = interaction;
+        const { config, serverConfigCollection } = client;
 
-        const { _id, leaveMessages, welcomeMessages } = await interaction.client.getServerConfigSchema();
+        const { _id, leaveMessages, welcomeMessages } = await getServerConfig(client);
 
         switch (group) {
             case 'messages': {

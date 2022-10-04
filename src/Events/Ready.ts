@@ -3,7 +3,13 @@ import { ActivityType, EmbedBuilder, Events, roleMention } from 'discord.js';
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { io } from 'socket.io-client';
 import { ClientEvent } from '../Structures';
-import { getDailyDilemmasChannel, getDailyQuestionsChannel, getVerifyLogsChannel, getVerifyUser } from '../Util';
+import {
+    getDailyDilemmasChannel,
+    getDailyQuestionsChannel,
+    getServerConfig,
+    getVerifyLogsChannel,
+    getVerifyUser,
+} from '../Util';
 
 export default new ClientEvent()
     .setName(Events.ClientReady)
@@ -24,7 +30,7 @@ export default new ClientEvent()
         dailyRule.minute = dailyRule.second = 0;
 
         scheduleJob(dailyRule, async () => {
-            const { _id, dailyDilemmas, dailyDilemmasRoleId } = await client.getServerConfigSchema();
+            const { _id, dailyDilemmas, dailyDilemmasRoleId } = await getServerConfig(client);
 
             const dailyDilemmasChannel = await getDailyDilemmasChannel(client);
 
@@ -48,7 +54,7 @@ export default new ClientEvent()
         });
 
         scheduleJob(dailyRule, async () => {
-            const { _id, dailyQuestions, dailyQuestionsRoleId } = await client.getServerConfigSchema();
+            const { _id, dailyQuestions, dailyQuestionsRoleId } = await getServerConfig(client);
 
             const dailyQuestionsChannel = await getDailyQuestionsChannel(client);
 
@@ -76,7 +82,7 @@ export default new ClientEvent()
         socket.on('connect', () => client.logger.info('Websocket connected.'));
 
         socket.on('verify', async (data: string) => {
-            const { verifiedRoleId } = await client.getServerConfigSchema();
+            const { verifiedRoleId } = await getServerConfig(client);
 
             const verifyUser = await getVerifyUser(client, { userId: data });
 

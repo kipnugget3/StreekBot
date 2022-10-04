@@ -12,13 +12,16 @@ export interface VerifySchema {
     leerlingnummer: string;
 }
 
-export function getVerifyUsers(client: Client<true>) {
+export function getVerifyUsers(client: Client<true>): Promise<WithId<VerifySchema>[]> {
     return client.verificationCollection.find().toArray();
 }
 
 interface GetVerifyUserOptions extends Partial<WithId<VerifySchema>> {}
 
-export function getVerifyUser(client: Client<true>, options: GetVerifyUserOptions) {
+export function getVerifyUser(
+    client: Client<true>,
+    options: GetVerifyUserOptions
+): Promise<WithId<VerifySchema> | null> {
     return client.verificationCollection.findOne(options);
 }
 
@@ -40,8 +43,16 @@ export interface ServerConfigSchema {
     welcomeMessages: string[];
 }
 
+export async function getServerConfig(client: Client<true>): Promise<WithId<ServerConfigSchema>> {
+    const schema = await client.serverConfigCollection.findOne();
+
+    if (!schema) throw new Error('No server config schema found.');
+
+    return schema;
+}
+
 export async function getDailyDilemmasChannel(client: Client<true>): Promise<GuildTextBasedChannel> {
-    const { dailyDilemmasChannelId } = await client.getServerConfigSchema();
+    const { dailyDilemmasChannelId } = await getServerConfig(client);
 
     const guild = await client.guilds.fetch(client.config.guildId);
 
@@ -52,7 +63,7 @@ export async function getDailyDilemmasChannel(client: Client<true>): Promise<Gui
 }
 
 export async function getDailyQuestionsChannel(client: Client<true>): Promise<GuildTextBasedChannel> {
-    const { dailyQuestionsChannelId } = await client.getServerConfigSchema();
+    const { dailyQuestionsChannelId } = await getServerConfig(client);
 
     const guild = await client.guilds.fetch(client.config.guildId);
 
@@ -63,7 +74,7 @@ export async function getDailyQuestionsChannel(client: Client<true>): Promise<Gu
 }
 
 export async function getVerifyLogsChannel(client: Client<true>): Promise<GuildTextBasedChannel> {
-    const { verifyLogsChannelId } = await client.getServerConfigSchema();
+    const { verifyLogsChannelId } = await getServerConfig(client);
 
     const guild = await client.guilds.fetch(client.config.guildId);
 
@@ -74,7 +85,7 @@ export async function getVerifyLogsChannel(client: Client<true>): Promise<GuildT
 }
 
 export async function getWelcomeChannel(client: Client<true>): Promise<GuildTextBasedChannel> {
-    const { welcomeChannelId } = await client.getServerConfigSchema();
+    const { welcomeChannelId } = await getServerConfig(client);
 
     const guild = await client.guilds.fetch(client.config.guildId);
 

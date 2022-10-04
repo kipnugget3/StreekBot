@@ -1,6 +1,6 @@
 import { env } from 'node:process';
 import { Client as BaseClient, type ClientApplication, type ClientOptions, type ClientUser } from 'discord.js';
-import { type Collection, type Db, MongoClient, WithId } from 'mongodb';
+import { type Collection, type Db, MongoClient } from 'mongodb';
 import { AutocompleteManager, CommandManager, ComponentManager, EventManager, ModalManager } from './Managers';
 import { Logger } from './Logger';
 import type { ServerConfigSchema, VerifySchema } from '../Util';
@@ -45,8 +45,6 @@ declare module 'discord.js' {
         mongoClient: MongoClient;
         database: Db;
 
-        getServerConfigSchema(): Promise<WithId<ServerConfigSchema>>;
-
         get verificationCollection(): Collection<VerifySchema>;
         get serverConfigCollection(): Collection<ServerConfigSchema>;
     }
@@ -90,14 +88,6 @@ export class Client extends BaseClient {
         this.events.registerAll();
 
         this.login(this.config.token);
-    }
-
-    override async getServerConfigSchema() {
-        const schema = await this.serverConfigCollection.findOne();
-
-        if (!schema) throw new Error('No server config schema found.');
-
-        return schema;
     }
 
     override get verificationCollection(): Collection<VerifySchema> {
